@@ -84,6 +84,8 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
     }
 
     const stats = data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat?.[0];
+    console.log('Raw stats data:', stats);
+
     if (!stats) {
       console.log('No stats found for FID:', fid);
       return {
@@ -96,6 +98,8 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
         followerCount: 0
       };
     }
+
+    console.log('Social data:', stats.socials);
 
     return {
       allEarningsAmount: stats.allEarningsAmount || '0',
@@ -186,7 +190,7 @@ app.frame('/check', async (c) => {
                 style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px' }}
               />
             ) : (
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black' }}>
                 {stats.profileName ? stats.profileName.charAt(0).toUpperCase() : 'U'}
               </div>
             )}
