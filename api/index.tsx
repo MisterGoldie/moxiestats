@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
-const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e';
+const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
 
 export const app = new Frog({
   basePath: '/api',
@@ -49,6 +49,9 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
   `;
 
   try {
+    console.log('Fetching Moxie stats for FID:', fid);
+    console.log('Using Airstack API Key:', AIRSTACK_API_KEY.substring(0, 5) + '...');
+    
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
@@ -59,24 +62,36 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Airstack API Error:', response.status, errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     console.log('Airstack API response:', JSON.stringify(data, null, 2));
 
+    if (!data.data || !data.data.FarcasterMoxieEarningStats || !data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat) {
+      console.error('Unexpected API response structure:', data);
+      throw new Error('Unexpected API response structure');
+    }
+
     const stats = data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat[0];
+    if (!stats) {
+      console.error('No stats found for FID:', fid);
+      throw new Error('No stats found');
+    }
+
     return {
-      allEarningsAmount: stats.allEarningsAmount,
-      castEarningsAmount: stats.castEarningsAmount,
-      frameDevEarningsAmount: stats.frameDevEarningsAmount,
-      otherEarningsAmount: stats.otherEarningsAmount,
+      allEarningsAmount: stats.allEarningsAmount || '0',
+      castEarningsAmount: stats.castEarningsAmount || '0',
+      frameDevEarningsAmount: stats.frameDevEarningsAmount || '0',
+      otherEarningsAmount: stats.otherEarningsAmount || '0',
       profileName: stats.socials[0]?.profileName || null,
       profileImage: stats.socials[0]?.profileImage || null,
       followerCount: stats.socials[0]?.followerCount || 0
     };
   } catch (error) {
-    console.error('Error fetching Moxie stats:', error);
+    console.error('Detailed error in getMoxieStats:', error);
     throw error;
   }
 }
@@ -119,8 +134,11 @@ app.frame('/', (c) => {
 
 app.frame('/check', async (c) => {
   const { fid } = c.frameData || {};
+  console.log('Frame data:', c.frameData);
+  console.log('FID:', fid);
 
   if (!fid) {
+    console.error('No FID found in frameData');
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
@@ -136,6 +154,7 @@ app.frame('/check', async (c) => {
 
   try {
     const stats = await getMoxieStats(fid.toString());
+    console.log('Retrieved stats:', stats);
 
     return c.res({
       image: (
@@ -168,12 +187,13 @@ app.frame('/check', async (c) => {
       ]
     });
   } catch (error) {
-    console.error('Error in stats check:', error);
+    console.error('Detailed error in stats check:', error);
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
           <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error</h1>
           <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Unable to fetch $MOXIE stats. Please try again later.</p>
+          <p style={{ fontSize: '18px', textAlign: 'center', color: 'white' }}>{error instanceof Error ? error.message : 'Unknown error'}</p>
         </div>
       ),
       intents: [
