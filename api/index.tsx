@@ -31,7 +31,7 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
   const query = `
     query MoxieEarningStatsFrame($fid: String!) {
       FarcasterMoxieEarningStats(
-        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
+        input: {timeframe: ALL_TIME, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
       ) {
         FarcasterMoxieEarningStat {
           allEarningsAmount
@@ -45,12 +45,18 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
           }
         }
       }
+      Socials(input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}) {
+        Social {
+          profileName
+          profileImage
+          followerCount
+        }
+      }
     }
   `;
 
   try {
     console.log('Fetching Moxie stats for FID:', fid);
-    console.log('Using Airstack API Key:', AIRSTACK_API_KEY.substring(0, 5) + '...');
     
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
@@ -78,37 +84,20 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
       throw new Error('GraphQL errors in the response');
     }
 
-    if (!data.data || !data.data.FarcasterMoxieEarningStats) {
-      console.error('Unexpected API response structure:', data);
-      throw new Error('Unexpected API response structure');
-    }
+    const moxieStats = data.data?.FarcasterMoxieEarningStats?.FarcasterMoxieEarningStat?.[0] || {};
+    const socialData = data.data?.Socials?.Social?.[0] || {};
 
-    const stats = data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat?.[0];
-    console.log('Raw stats data:', stats);
-
-    if (!stats) {
-      console.log('No stats found for FID:', fid);
-      return {
-        allEarningsAmount: '0',
-        castEarningsAmount: '0',
-        frameDevEarningsAmount: '0',
-        otherEarningsAmount: '0',
-        profileName: null,
-        profileImage: null,
-        followerCount: 0
-      };
-    }
-
-    console.log('Social data:', stats.socials);
+    console.log('Moxie stats data:', moxieStats);
+    console.log('Social data:', socialData);
 
     return {
-      allEarningsAmount: stats.allEarningsAmount || '0',
-      castEarningsAmount: stats.castEarningsAmount || '0',
-      frameDevEarningsAmount: stats.frameDevEarningsAmount || '0',
-      otherEarningsAmount: stats.otherEarningsAmount || '0',
-      profileName: stats.socials?.[0]?.profileName || null,
-      profileImage: stats.socials?.[0]?.profileImage || null,
-      followerCount: stats.socials?.[0]?.followerCount || 0
+      allEarningsAmount: moxieStats.allEarningsAmount || '0',
+      castEarningsAmount: moxieStats.castEarningsAmount || '0',
+      frameDevEarningsAmount: moxieStats.frameDevEarningsAmount || '0',
+      otherEarningsAmount: moxieStats.otherEarningsAmount || '0',
+      profileName: socialData.profileName || null,
+      profileImage: socialData.profileImage || null,
+      followerCount: socialData.followerCount || 0
     };
   } catch (error) {
     console.error('Detailed error in getMoxieStats:', error);
@@ -190,7 +179,7 @@ app.frame('/check', async (c) => {
                 style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px' }}
               />
             ) : (
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '32px' }}>
                 {stats.profileName ? stats.profileName.charAt(0).toUpperCase() : 'U'}
               </div>
             )}
