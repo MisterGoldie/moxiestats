@@ -55,19 +55,20 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
     }
   `;
 
+  const variables = { fid: `fc_fid:${fid}` };
+  console.log('Query:', query);
+  console.log('Variables:', variables);
+
   try {
     console.log('Fetching Moxie stats for FID:', fid);
-    
+
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': AIRSTACK_API_KEY
       },
-      body: JSON.stringify({ 
-        query,
-        variables: { fid: `fc_fid:${fid}` }
-      })
+      body: JSON.stringify({ query, variables })
     });
 
     if (!response.ok) {
@@ -205,12 +206,15 @@ app.frame('/check', async (c) => {
     });
   } catch (error) {
     console.error('Detailed error in stats check:', error);
+    let errorMessage = 'Unable to fetch $MOXIE stats. Please try again later.';
+    if (error instanceof Error) {
+      errorMessage += ` Error: ${error.message}`;
+    }
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
           <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error</h1>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Unable to fetch $MOXIE stats. Please try again later.</p>
-          <p style={{ fontSize: '18px', textAlign: 'center', color: 'white' }}>{error instanceof Error ? error.message : 'Unknown error'}</p>
+          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>{errorMessage}</p>
         </div>
       ),
       intents: [
