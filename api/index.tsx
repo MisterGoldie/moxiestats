@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
-const AIRSTACK_API_KEY = process.env.AIRSTACK_API_KEY || ''; // Make sure to set this in your Vercel environment variables
+const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e';
 
 export const app = new Frog({
   basePath: '/api',
