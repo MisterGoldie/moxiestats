@@ -29,9 +29,9 @@ interface MoxieStats {
 
 async function getMoxieStats(fid: string): Promise<MoxieStats> {
   const query = `
-    query MoxieEarningStatsFrame {
+    query MoxieEarningStatsFrame($fid: String!) {
       FarcasterMoxieEarningStats(
-        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: "fc_fid:${fid}"}}}
+        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
       ) {
         FarcasterMoxieEarningStat {
           allEarningsAmount
@@ -58,7 +58,10 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
         'Content-Type': 'application/json',
         'Authorization': AIRSTACK_API_KEY
       },
-      body: JSON.stringify({ query })
+      body: JSON.stringify({ 
+        query,
+        variables: { fid: `fc_fid:${fid}` }
+      })
     });
 
     if (!response.ok) {
@@ -68,17 +71,30 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
     }
 
     const data = await response.json();
-    console.log('Airstack API response:', JSON.stringify(data, null, 2));
+    console.log('Full Airstack API response:', JSON.stringify(data, null, 2));
 
-    if (!data.data || !data.data.FarcasterMoxieEarningStats || !data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat) {
+    if (data.errors) {
+      console.error('GraphQL Errors:', data.errors);
+      throw new Error('GraphQL errors in the response');
+    }
+
+    if (!data.data || !data.data.FarcasterMoxieEarningStats) {
       console.error('Unexpected API response structure:', data);
       throw new Error('Unexpected API response structure');
     }
 
-    const stats = data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat[0];
+    const stats = data.data.FarcasterMoxieEarningStats.FarcasterMoxieEarningStat?.[0];
     if (!stats) {
-      console.error('No stats found for FID:', fid);
-      throw new Error('No stats found');
+      console.log('No stats found for FID:', fid);
+      return {
+        allEarningsAmount: '0',
+        castEarningsAmount: '0',
+        frameDevEarningsAmount: '0',
+        otherEarningsAmount: '0',
+        profileName: null,
+        profileImage: null,
+        followerCount: 0
+      };
     }
 
     return {
@@ -86,9 +102,9 @@ async function getMoxieStats(fid: string): Promise<MoxieStats> {
       castEarningsAmount: stats.castEarningsAmount || '0',
       frameDevEarningsAmount: stats.frameDevEarningsAmount || '0',
       otherEarningsAmount: stats.otherEarningsAmount || '0',
-      profileName: stats.socials[0]?.profileName || null,
-      profileImage: stats.socials[0]?.profileImage || null,
-      followerCount: stats.socials[0]?.followerCount || 0
+      profileName: stats.socials?.[0]?.profileName || null,
+      profileImage: stats.socials?.[0]?.profileImage || null,
+      followerCount: stats.socials?.[0]?.followerCount || 0
     };
   } catch (error) {
     console.error('Detailed error in getMoxieStats:', error);
@@ -156,6 +172,8 @@ app.frame('/check', async (c) => {
     const stats = await getMoxieStats(fid.toString());
     console.log('Retrieved stats:', stats);
 
+    const hasEarnings = parseFloat(stats.allEarningsAmount) > 0;
+
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2', padding: '20px', boxSizing: 'border-box' }}>
@@ -174,10 +192,16 @@ app.frame('/check', async (c) => {
             )}
             <p style={{ fontSize: '32px', textAlign: 'center', color: 'white' }}>{stats.profileName || `FID: ${fid}`}</p>
           </div>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Total Earnings: {stats.allEarningsAmount} $MOXIE</p>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Cast Earnings: {stats.castEarningsAmount} $MOXIE</p>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Frame Dev Earnings: {stats.frameDevEarningsAmount} $MOXIE</p>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Other Earnings: {stats.otherEarningsAmount} $MOXIE</p>
+          {hasEarnings ? (
+            <>
+              <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Total Earnings: {stats.allEarningsAmount} $MOXIE</p>
+              <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Cast Earnings: {stats.castEarningsAmount} $MOXIE</p>
+              <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Frame Dev Earnings: {stats.frameDevEarningsAmount} $MOXIE</p>
+              <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Other Earnings: {stats.otherEarningsAmount} $MOXIE</p>
+            </>
+          ) : (
+            <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>No $MOXIE earnings yet. Keep participating!</p>
+          )}
           <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Followers: {stats.followerCount}</p>
         </div>
       ),
