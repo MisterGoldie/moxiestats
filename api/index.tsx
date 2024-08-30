@@ -79,9 +79,10 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     }
 
     const socialData = data.data?.Socials?.Social?.[0] || {};
-    const degenBalance = socialData.userAddressDetails?.[0]?.tokenBalances?.[0]?.formattedAmount || '0';
-
     console.log('Social data:', socialData);
+
+    const degenBalance = socialData.userAddressDetails?.[0]?.tokenBalances?.[0]?.formattedAmount || '0';
+    console.log('$DEGEN balance:', degenBalance);
 
     return {
       profileName: socialData.profileName || null,
