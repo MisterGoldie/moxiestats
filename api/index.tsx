@@ -158,62 +158,55 @@ app.frame('/check', async (c) => {
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
-          justifyContent: 'flex-start', 
+          justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/Qme8LxFBeuJhKNdNV1M6BjRkYPDxQddo2eHiPhYaEdALvz)',
+          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
           boxSizing: 'border-box',
-          position: 'relative'
+          position: 'relative'  // Added for absolute positioning of profile picture
         }}>
-          {/* Large profile picture or initial */}
-          <div style={{ 
-            position: 'absolute', 
-            top: '20px', 
-            left: '20px', 
-            width: '300px', 
-            height: '300px', 
-            borderRadius: '50%', 
-            backgroundColor: pfpUrl ? 'transparent' : '#ccc', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            border: '6px solid white',
-            boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-            overflow: 'hidden'
-          }}>
-            {pfpUrl ? (
-              <img 
-                src={pfpUrl} 
-                alt="Profile" 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  objectFit: 'cover'
-                }}
-              />
-            ) : (
-              <span style={{
-                fontSize: '120px',
-                color: '#333'
-              }}>
-                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-              </span>
-            )}
-          </div>
+          {/* Profile picture in top left corner */}
+          {pfpUrl ? (
+            <img 
+              src={pfpUrl} 
+              alt="Profile" 
+              style={{ 
+                position: 'absolute', 
+                top: '20px', 
+                left: '20px', 
+                width: '80px', 
+                height: '80px', 
+                borderRadius: '50%',
+                border: '3px solid white'  // Added white border for visibility
+              }}
+            />
+          ) : (
+            <div style={{ 
+              position: 'absolute', 
+              top: '20px', 
+              left: '20px', 
+              width: '150px', 
+              height: '150px', 
+              borderRadius: '50%', 
+              backgroundColor: '#ccc', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              border: '3px solid white',  // Added white border for visibility
+              fontSize: '36px',
+              color: '#333'
+            }}>
+              {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
+            </div>
+          )}
           
-          {/* Content shifted to the right */}
-          <div style={{
-            marginLeft: '340px', // Adjust based on profile picture size
-            width: 'calc(100% - 360px)', // Adjust based on profile picture size and desired spacing
-          }}>
-            <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Your $DEGEN Balance</h1>
-            <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
-            <p style={{ fontSize: '52px', textAlign: 'center', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
-            <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>Followers: {userInfo.followerCount}</p>
-          </div>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Your $DEGEN Balance</h1>
+          <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
+          <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
+          <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
       ),
       intents: [
