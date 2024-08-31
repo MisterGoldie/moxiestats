@@ -158,7 +158,7 @@ app.frame('/check', async (c) => {
           justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva)',
+          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmULJZ1n6BTRFzGUDEN51zpECth3b57xh6TDqXzq1QZsj9)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
