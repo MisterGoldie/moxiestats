@@ -110,19 +110,12 @@ app.frame('/', (c) => {
         alignItems: 'center',
         width: '100%',
         height: '100%',
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         backgroundColor: '#1DA1F2', // Fallback background color
-      }}>
-        <img
-          src={backgroundImageUrl}
-          alt="Background"
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-          }}
-        />
-      </div>
+      }} />
     ),
     intents: [
       <Button action="/check">Check Balance</Button>,
@@ -170,21 +163,12 @@ app.frame('/check', async (c) => {
           justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          position: 'relative',
+          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           padding: '20px', 
           boxSizing: 'border-box' 
         }}>
-          <img
-            src={backgroundImageUrl}
-            alt="Background"
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              zIndex: -1,
-            }}
-          />
           <div style={{
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
             padding: '20px',
