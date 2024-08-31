@@ -161,27 +161,50 @@ app.frame('/check', async (c) => {
           justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva)',
+          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/Qme8LxFBeuJhKNdNV1M6BjRkYPDxQddo2eHiPhYaEdALvz)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
-          boxSizing: 'border-box' 
+          boxSizing: 'border-box',
+          position: 'relative'  // Added for absolute positioning of profile picture
         }}>
+          {/* Profile picture in top left corner */}
+          {pfpUrl ? (
+            <img 
+              src={pfpUrl} 
+              alt="Profile" 
+              style={{ 
+                position: 'absolute', 
+                top: '20px', 
+                left: '20px', 
+                width: '80px', 
+                height: '80px', 
+                borderRadius: '50%',
+                border: '3px solid white'  // Added white border for visibility
+              }}
+            />
+          ) : (
+            <div style={{ 
+              position: 'absolute', 
+              top: '20px', 
+              left: '20px', 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '50%', 
+              backgroundColor: '#ccc', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              border: '3px solid white',  // Added white border for visibility
+              fontSize: '36px',
+              color: '#333'
+            }}>
+              {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
+            </div>
+          )}
+          
           <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Your $DEGEN Balance</h1>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-            {pfpUrl ? (
-              <img 
-                src={pfpUrl} 
-                alt="Profile" 
-                style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px' }}
-              />
-            ) : (
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-              </div>
-            )}
-            <p style={{ fontSize: '40px', textAlign: 'center' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
-          </div>
+          <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
           <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
           <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
