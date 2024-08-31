@@ -166,45 +166,56 @@ app.frame('/check', async (c) => {
           backgroundPosition: 'center',
           padding: '20px', 
           boxSizing: 'border-box',
-          position: 'relative'  // Added for absolute positioning of profile picture
+          position: 'relative'
         }}>
-          {/* Profile picture in top left corner */}
-          {pfpUrl ? (
-            <img 
-              src={pfpUrl} 
-              alt="Profile" 
-              style={{ 
-                position: 'absolute', 
-                top: '30px', 
-                left: '20px', 
+          {/* Profile picture in top left corner with FID underneath */}
+          <div style={{
+            position: 'absolute',
+            top: '30px',
+            left: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            {pfpUrl ? (
+              <img 
+                src={pfpUrl} 
+                alt="Profile" 
+                style={{ 
+                  width: '180px', 
+                  height: '180px', 
+                  borderRadius: '50%',
+                  border: '3px solid white'
+                }}
+              />
+            ) : (
+              <div style={{ 
                 width: '180px', 
                 height: '180px', 
-                borderRadius: '50%',
-                border: '3px solid white'  // Added white border for visibility
-              }}
-            />
-          ) : (
-            <div style={{ 
-              position: 'absolute', 
-              top: '30px', 
-              left: '20px', 
-              width: '180px', 
-              height: '180px', 
-              borderRadius: '50%', 
-              backgroundColor: '#ccc', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              border: '3px solid white',  // Added white border for visibility
-              fontSize: '90px',
-              color: '#333'
+                borderRadius: '50%', 
+                backgroundColor: '#ccc', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                border: '3px solid white',
+                fontSize: '90px',
+                color: '#333'
+              }}>
+                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
+              </div>
+            )}
+            <p style={{ 
+              fontSize: '24px', 
+              marginTop: '10px', 
+              color: 'white', 
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
-              {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-            </div>
-          )}
+              FID: {fid}
+            </p>
+          </div>
           
           <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Tip balance</h1>
-          <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
+          <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || 'Unknown User'}</p>
           <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
           <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
