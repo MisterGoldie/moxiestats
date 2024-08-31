@@ -20,10 +20,8 @@ export const app = new Frog({
 interface MoxieUserInfo {
   profileName: string | null;
   profileImage: string | null;
-  followerCount: number;
   todayEarnings: string;
   lifetimeEarnings: string;
-  farScore: number | null;
 }
 
 async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
@@ -98,10 +96,8 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
-      followerCount: socialInfo.followerCount || 0,
       todayEarnings,
       lifetimeEarnings,
-      farScore: socialInfo.farcasterScore?.farScore || null,
     };
   } catch (error) {
     console.error('Detailed error in getMoxieUserInfo:', error);
@@ -218,19 +214,10 @@ app.frame('/check', async (c) => {
             }}>
               FID: {fid}
             </p>
-            {userInfo.farScore !== null && (
-              <p style={{ 
-                fontSize: '20px', 
-                marginTop: '5px', 
-                color: 'black', 
-              }}>
-                Farscore: {userInfo.farScore}
-              </p>
-            )}
           </div>
           
           {/* The $MOXIE Earnings title is hidden here */}
-          <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
+
         </div>
       ),
       intents: [
