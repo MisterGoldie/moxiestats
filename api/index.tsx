@@ -158,17 +158,17 @@ app.frame('/check', async (c) => {
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
-          justifyContent: 'center', 
+          justifyContent: 'flex-start', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva)',
+          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/Qme8LxFBeuJhKNdNV1M6BjRkYPDxQddo2eHiPhYaEdALvz)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
           boxSizing: 'border-box',
-          position: 'relative'  // Added for absolute positioning of profile picture
+          position: 'relative'
         }}>
-          {/* Profile picture in top left corner */}
+          {/* Large profile picture */}
           {pfpUrl ? (
             <img 
               src={pfpUrl} 
@@ -177,10 +177,11 @@ app.frame('/check', async (c) => {
                 position: 'absolute', 
                 top: '20px', 
                 left: '20px', 
-                width: '80px', 
-                height: '80px', 
+                width: '300px', 
+                height: '300px', 
                 borderRadius: '50%',
-                border: '3px solid white'  // Added white border for visibility
+                border: '6px solid white',
+                boxShadow: '0 0 20px rgba(0,0,0,0.3)'
               }}
             />
           ) : (
@@ -195,18 +196,25 @@ app.frame('/check', async (c) => {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              border: '3px solid white',  // Added white border for visibility
-              fontSize: '36px',
+              border: '6px solid white',
+              boxShadow: '0 0 20px rgba(0,0,0,0.3)',
+              fontSize: '120px',
               color: '#333'
             }}>
               {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
             </div>
           )}
           
-          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Your $DEGEN Balance</h1>
-          <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
-          <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
-          <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
+          {/* Content shifted to the right */}
+          <div style={{
+            marginLeft: '340px', // Adjust based on profile picture size
+            width: 'calc(100% - 360px)', // Adjust based on profile picture size and desired spacing
+          }}>
+            <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Your $DEGEN Balance</h1>
+            <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
+            <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
+            <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
+          </div>
         </div>
       ),
       intents: [
