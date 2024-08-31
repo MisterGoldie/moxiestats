@@ -56,6 +56,9 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 
   const variables = { fid: `fc_fid:${fid}` };
 
+  console.log('Query:', query);
+  console.log('Variables:', JSON.stringify(variables, null, 2));
+
   try {
     console.log('Sending query to Airstack API...');
     const response = await fetch(AIRSTACK_API_URL, {
@@ -68,16 +71,24 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Airstack API Error:', response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('API response data:', JSON.stringify(data, null, 2));
+    console.log('Full Airstack API response:', JSON.stringify(data, null, 2));
+
+    if (data.errors) {
+      console.error('GraphQL Errors:', data.errors);
+      throw new Error('GraphQL errors in the response');
+    }
 
     const socialInfo = data.data?.Socials?.Social?.[0] || {};
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
 
+    console.log('Parsed social info:', socialInfo);
     console.log('Today\'s earnings:', todayEarnings);
     console.log('Lifetime earnings:', lifetimeEarnings);
 
