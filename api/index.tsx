@@ -215,7 +215,6 @@ app.frame('/check', async (c) => {
           </div>
           
           <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Tip balance</h1>
-          <p style={{ fontSize: '40px', textAlign: 'center', marginBottom: '20px' }}>{displayName || 'Unknown User'}</p>
           <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
           <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
