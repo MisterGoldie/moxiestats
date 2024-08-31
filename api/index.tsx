@@ -152,8 +152,6 @@ app.frame('/check', async (c) => {
     const userInfo = await getDegenUserInfo(fid.toString());
     console.log('Retrieved user info:', userInfo);
 
-    const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva';
-
     return c.res({
       image: (
         <div style={{ 
@@ -163,38 +161,29 @@ app.frame('/check', async (c) => {
           justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
           boxSizing: 'border-box' 
         }}>
-          <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            padding: '20px',
-            borderRadius: '10px',
-            textAlign: 'center'
-          }}>
-            <h1 style={{ fontSize: '48px', marginBottom: '20px', color: 'white' }}>Your $DEGEN Balance</h1>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-              {pfpUrl ? (
-                <img 
-                  src={pfpUrl} 
-                  alt="Profile" 
-                  style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px' }}
-                />
-              ) : (
-                <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-                </div>
-              )}
-              <p style={{ fontSize: '32px', color: 'white' }}>{displayName || `FID: ${fid}`}</p>
-            </div>
-            <p style={{ fontSize: '36px', color: 'white', marginBottom: '20px' }}>
-              Balance: {userInfo.degenBalance} $DEGEN
-            </p>
-            <p style={{ fontSize: '24px', color: 'white' }}>Followers: {userInfo.followerCount}</p>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Your $DEGEN Balance</h1>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+            {pfpUrl ? (
+              <img 
+                src={pfpUrl} 
+                alt="Profile" 
+                style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px' }}
+              />
+            ) : (
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
+              </div>
+            )}
+            <p style={{ fontSize: '40px', textAlign: 'center' }}>{displayName || `FID: ${fid}` || 'Unknown User'}</p>
           </div>
+          <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
+          <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
       ),
       intents: [
