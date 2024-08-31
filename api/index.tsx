@@ -175,10 +175,10 @@ app.frame('/check', async (c) => {
               alt="Profile" 
               style={{ 
                 position: 'absolute', 
-                top: '20px', 
+                top: '30px', 
                 left: '20px', 
-                width: '80px', 
-                height: '80px', 
+                width: '200px', 
+                height: '200px', 
                 borderRadius: '50%',
                 border: '3px solid white'  // Added white border for visibility
               }}
@@ -186,17 +186,17 @@ app.frame('/check', async (c) => {
           ) : (
             <div style={{ 
               position: 'absolute', 
-              top: '20px', 
+              top: '30px', 
               left: '20px', 
-              width: '300px', 
-              height: '300px', 
+              width: '200px', 
+              height: '200px', 
               borderRadius: '50%', 
               backgroundColor: '#ccc', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
               border: '3px solid white',  // Added white border for visibility
-              fontSize: '36px',
+              fontSize: '100px',
               color: '#333'
             }}>
               {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
