@@ -185,7 +185,7 @@ app.frame('/check', async (c) => {
                   width: '180px', 
                   height: '180px', 
                   borderRadius: '50%',
-                  border: '3px solid white'
+                  border: '3px solid black'
                 }}
               />
             ) : (
@@ -197,7 +197,7 @@ app.frame('/check', async (c) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                border: '3px solid white',
+                border: '3px solid black',
                 fontSize: '90px',
                 color: '#333'
               }}>
