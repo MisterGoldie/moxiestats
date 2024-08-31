@@ -9,7 +9,7 @@ const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API
 export const app = new Frog({
   basePath: '/api',
   imageOptions: { width: 1200, height: 630 },
-  title: '$MOXIE Tipping Balance Tracker',
+  title: '$MOXIE Earnings Tracker',  // Keeping the title as it was
 }).use(
   neynar({
     apiKey: 'NEYNAR_FROG_FM',
@@ -35,6 +35,10 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
         Social {
           profileName
           profileImage
+          followerCount
+          farcasterScore {
+            farScore
+          }
         }
       }
       todayEarnings: FarcasterMoxieEarningStats(
@@ -56,9 +60,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 
   const variables = { fid: `fc_fid:${fid}` };
 
-  console.log('Query:', query);
-  console.log('Variables:', JSON.stringify(variables, null, 2));
-
   try {
     console.log('Sending query to Airstack API...');
     const response = await fetch(AIRSTACK_API_URL, {
@@ -72,12 +73,12 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Airstack API Error:', response.status, errorText);
+      console.error('API error:', response.status, errorText);
       throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('Full Airstack API response:', JSON.stringify(data, null, 2));
+    console.log('API response data:', JSON.stringify(data, null, 2));
 
     if (data.errors) {
       console.error('GraphQL Errors:', data.errors);
@@ -89,14 +90,14 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
 
     console.log('Parsed social info:', socialInfo);
-    console.log('Today\'s earnings:', todayEarnings);
-    console.log('Lifetime earnings:', lifetimeEarnings);
+    console.log('Today Earnings:', todayEarnings);
+    console.log('Lifetime Earnings:', lifetimeEarnings);
 
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
-      todayEarnings,
-      lifetimeEarnings
+      todayEarnings: parseFloat(todayEarnings).toFixed(2),
+      lifetimeEarnings: parseFloat(lifetimeEarnings).toFixed(2),
     };
   } catch (error) {
     console.error('Detailed error in getMoxieUserInfo:', error);
@@ -119,17 +120,17 @@ app.frame('/', (c) => {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundColor: '#1DA1F2',
+        backgroundColor: '#1DA1F2', // Fallback background color
       }} />
     ),
     intents: [
-      <Button action="/check">Check Balance</Button>,
+      <Button action="/check">Check Earnings</Button>,
     ],
   });
 });
 
 app.frame('/check', async (c) => {
-  console.log('Checking balance...');
+  console.log('Checking earnings...');
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
@@ -215,16 +216,8 @@ app.frame('/check', async (c) => {
             </p>
           </div>
           
-          <div style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            padding: '20px',
-            borderRadius: '10px',
-            textAlign: 'center'
-          }}>
-            <h1 style={{ fontSize: '48px', marginBottom: '20px', color: '#333' }}>$MOXIE Tipping Info</h1>
-            <p style={{ fontSize: '36px', color: '#333', marginBottom: '10px' }}>Today's Earnings: {userInfo.todayEarnings} $MOXIE</p>
-            <p style={{ fontSize: '36px', color: '#333' }}>Lifetime Earnings: {userInfo.lifetimeEarnings} $MOXIE</p>
-          </div>
+          {/* The $MOXIE Earnings title is hidden here */}
+
         </div>
       ),
       intents: [
@@ -233,7 +226,7 @@ app.frame('/check', async (c) => {
       ]
     });
   } catch (error) {
-    console.error('Detailed error in balance check:', error);
+    console.error('Detailed error in earnings check:', error);
     let errorMessage = 'Unable to fetch $MOXIE info. Please try again later.';
     if (error instanceof Error) errorMessage += ` Error: ${error.message}`;
     return c.res({
