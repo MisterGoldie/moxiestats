@@ -208,7 +208,7 @@ app.frame('/check', async (c) => {
               </div>
             )}
             <p style={{ 
-              fontSize: '30px', 
+              fontSize: '24px', 
               marginTop: '10px', 
               color: 'black', 
             }}>
