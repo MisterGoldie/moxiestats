@@ -119,7 +119,7 @@ app.frame('/', (c) => {
         <h1 style={{
           fontFamily: 'Arial, sans-serif',
           fontSize: '60px',
-          marginBottom: '10px',
+          marginBottom: '18px',
           textAlign: 'center',
           color: 'white',
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
@@ -127,7 +127,7 @@ app.frame('/', (c) => {
         <p style={{
           fontFamily: 'Arial, sans-serif',
           fontSize: '36px',
-          marginBottom: '20px',
+          marginBottom: '40px',
           textAlign: 'center',
           color: 'white',
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
