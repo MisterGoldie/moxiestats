@@ -117,6 +117,7 @@ app.frame('/', (c) => {
         boxSizing: 'border-box',
       }}>
         <h1 style={{
+          fontFamily: 'Arial, sans-serif',
           fontSize: '60px',
           marginBottom: '20px',
           textAlign: 'center',
@@ -124,6 +125,7 @@ app.frame('/', (c) => {
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
         }}>$DEGEN Balance Tracker</h1>
         <p style={{
+          fontFamily: 'Arial, sans-serif',
           fontSize: '36px',
           marginBottom: '40px',
           textAlign: 'center',
