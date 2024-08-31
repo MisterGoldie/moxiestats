@@ -96,8 +96,8 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
-      todayEarnings,
-      lifetimeEarnings,
+      todayEarnings: parseFloat(todayEarnings).toFixed(2),
+      lifetimeEarnings: parseFloat(lifetimeEarnings).toFixed(2),
     };
   } catch (error) {
     console.error('Detailed error in getMoxieUserInfo:', error);
