@@ -26,7 +26,7 @@ interface DegenUserInfo {
 }
 
 async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
-  const query = `
+  const socialQuery = `
     query DegenTippingBalanceTracker($fid: String!) {
       Socials(
         input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}
@@ -42,95 +42,74 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     }
   `;
 
-  const variables = { fid: `fc_fid:${fid}` };
+  const tippingQuery = `
+    query GetDegenTippingInfo($fid: String!) {
+      FarcasterMoxieEarningStats(
+        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
+      ) {
+        FarcasterMoxieEarningStat {
+          allEarningsAmount
+          castEarningsAmount
+          entityId
+          entityType
+          timeframe
+        }
+      }
+    }
+  `;
+
+  const socialVariables = { fid: `fc_fid:${fid}` };
+  const tippingVariables = { fid: `fc_fid:${fid}` };
 
   try {
-    const response = await fetch(AIRSTACK_API_URL, {
+    // Fetch social data
+    const socialResponse = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': AIRSTACK_API_KEY
       },
-      body: JSON.stringify({ query, variables })
+      body: JSON.stringify({ query: socialQuery, variables: socialVariables })
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!socialResponse.ok) {
+      throw new Error(`HTTP error! status: ${socialResponse.status}`);
     }
 
-    const data = await response.json();
-    const socialData = data.data?.Socials?.Social?.[0] || {};
-    const userAddresses = socialData.userAssociatedAddresses || [];
+    const socialData = await socialResponse.json();
+    const socialInfo = socialData.data?.Socials?.Social?.[0] || {};
 
-    // Fetch both daily allocation and current balance
-    const { dailyAllocation, currentBalance } = await getDegenTippingInfo(userAddresses);
+    // Fetch tipping data
+    const tippingResponse = await fetch(AIRSTACK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': AIRSTACK_API_KEY
+      },
+      body: JSON.stringify({ query: tippingQuery, variables: tippingVariables })
+    });
+
+    if (!tippingResponse.ok) {
+      throw new Error(`HTTP error! status: ${tippingResponse.status}`);
+    }
+
+    const tippingData = await tippingResponse.json();
+    const tippingInfo = tippingData.data?.FarcasterMoxieEarningStats?.FarcasterMoxieEarningStat?.[0] || {};
+
+    // Parse the tipping information
+    const dailyAllocation = tippingInfo.allEarningsAmount || '0';
+    const currentBalance = tippingInfo.castEarningsAmount || '0';
 
     return {
-      profileName: socialData.profileName || null,
-      profileImage: socialData.profileImage || null,
-      followerCount: socialData.followerCount || 0,
+      profileName: socialInfo.profileName || null,
+      profileImage: socialInfo.profileImage || null,
+      followerCount: socialInfo.followerCount || 0,
       dailyAllocation,
       currentBalance
     };
   } catch (error) {
     console.error('Error in getDegenUserInfo:', error);
     throw error;
-  }
-}
-
-async function getDegenTippingInfo(addresses: string[]): Promise<{ dailyAllocation: string, currentBalance: string }> {
-  const DEGEN_TIPPING_CONTRACT = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed";
-  const DEGEN_TOKEN_ADDRESS = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed"; // Assuming this is the correct token address
-
-  const query = `
-    query DegenTippingInfo($addresses: [Address!]!, $tokenAddress: Address!, $tippingContract: Address!) {
-      TokenBalances(
-        input: {filter: {owner: {_in: $addresses}, tokenAddress: {_eq: $tokenAddress}}, blockchain: base}
-      ) {
-        TokenBalance {
-          formattedAmount
-        }
-      }
-      ContractFunctions(
-        input: {filter: {address: {_eq: $tippingContract}, functionName: {_eq: "getDailyAllocation"}}, blockchain: base}
-      ) {
-        FunctionCall {
-          outputValues
-        }
-      }
-    }
-  `;
-
-  const variables = { 
-    addresses: addresses,
-    tokenAddress: DEGEN_TOKEN_ADDRESS,
-    tippingContract: DEGEN_TIPPING_CONTRACT
-  };
-
-  try {
-    const response = await fetch(AIRSTACK_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': AIRSTACK_API_KEY
-      },
-      body: JSON.stringify({ query, variables })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Degen Tipping Info API response:', JSON.stringify(data, null, 2));
-
-    const currentBalance = data.data?.TokenBalances?.TokenBalance?.[0]?.formattedAmount || "0";
-    const dailyAllocation = data.data?.ContractFunctions?.FunctionCall?.[0]?.outputValues?.[0] || "0";
-
-    return { dailyAllocation, currentBalance };
-  } catch (error) {
-    console.error('Error fetching DEGEN tipping info:', error);
-    return { dailyAllocation: "0", currentBalance: "0" };
   }
 }
 
