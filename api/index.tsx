@@ -204,7 +204,6 @@ app.frame('/check', async (c) => {
               fontSize: '24px', 
               marginTop: '10px', 
               color: 'black', 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
               FID: {fid}
             </p>
@@ -212,8 +211,7 @@ app.frame('/check', async (c) => {
               <p style={{ 
                 fontSize: '20px', 
                 marginTop: '5px', 
-                color: 'white', 
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+                color: 'black', 
               }}>
                 Farscore: {userInfo.farScore}
               </p>
