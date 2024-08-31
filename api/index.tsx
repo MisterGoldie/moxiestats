@@ -109,7 +109,7 @@ app.frame('/', (c) => {
         justifyContent: 'flex-end',
         width: '100%',
         height: '100%',
-        backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmasXiJbZjdHEN2FAwTVUEJKGqpj81TwvHky5u9Dy7oiDj)',
+        backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmejSuB28UbCignQSyvsR5sF1ffc7Fz3XX362UMdupyxJS)',
         backgroundSize: 'contain', // Ensures the image fits within the container without being zoomed in
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
