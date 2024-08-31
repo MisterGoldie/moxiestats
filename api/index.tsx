@@ -9,7 +9,7 @@ const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API
 export const app = new Frog({
   basePath: '/api',
   imageOptions: { width: 1200, height: 630 },
-  title: 'Earnings Tracker',  // Updated title, removed $MOXIE Earnings
+  title: '$MOXIE Earnings Tracker',  // Keep the title as it was
 }).use(
   neynar({
     apiKey: 'NEYNAR_FROG_FM',
@@ -218,7 +218,7 @@ app.frame('/check', async (c) => {
             )}
           </div>
           
-          {/* Removed $MOXIE Earnings title */}
+          {/* The $MOXIE Earnings title is hidden here */}
           <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
       ),
@@ -229,7 +229,7 @@ app.frame('/check', async (c) => {
     });
   } catch (error) {
     console.error('Detailed error in earnings check:', error);
-    let errorMessage = 'Unable to fetch earnings info. Please try again later.';
+    let errorMessage = 'Unable to fetch $MOXIE info. Please try again later.';
     if (error instanceof Error) errorMessage += ` Error: ${error.message}`;
     return c.res({
       image: (
