@@ -81,12 +81,15 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     const socialData = data.data?.Socials?.Social?.[0] || {};
     console.log('Social data:', socialData);
 
+    const profileImage = socialData.profileImage;
+    console.log('Profile image URL:', profileImage);
+
     const degenBalance = socialData.userAddressDetails?.[0]?.tokenBalances?.[0]?.formattedAmount || '0';
     console.log('$DEGEN balance:', degenBalance);
 
     return {
       profileName: socialData.profileName || null,
-      profileImage: socialData.profileImage || null,
+      profileImage: profileImage,
       followerCount: socialData.followerCount || 0,
       degenBalance: degenBalance
     };
@@ -166,6 +169,12 @@ app.frame('/check', async (c) => {
                 src={userInfo.profileImage} 
                 alt="Profile" 
                 style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px' }}
+                onError={(e: ErrorEvent) => {
+                  console.error('Error loading profile image:', e);
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.onerror = null; 
+                  target.src = 'https://placekitten.com/64/64'; // Fallback image
+                }}
               />
             ) : (
               <div style={{ width: '64px', height: '64px', borderRadius: '50%', marginRight: '10px', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '32px' }}>
