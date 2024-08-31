@@ -106,10 +106,12 @@ app.frame('/', (c) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         width: '100%',
         height: '100%',
-        backgroundColor: '#1DA1F2',
+        backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRotwRckBcUkGU34SmLR93qwv8d61nQ6XcyZTLf91U9xc)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         padding: '20px',
         boxSizing: 'border-box',
       }}>
@@ -122,7 +124,7 @@ app.frame('/', (c) => {
         }}>$DEGEN Balance Tracker</h1>
         <p style={{
           fontSize: '36px',
-          marginBottom: '20px',
+          marginBottom: '40px',
           textAlign: 'center',
           color: 'white',
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
