@@ -9,7 +9,7 @@ const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API
 export const app = new Frog({
   basePath: '/api',
   imageOptions: { width: 1200, height: 630 },
-  title: '$MOXIE Earnings Tracker',  // Keep the title as it was
+  title: '$MOXIE Earnings Tracker',  // Keeping the title as it was
 }).use(
   neynar({
     apiKey: 'NEYNAR_FROG_FM',
@@ -20,6 +20,7 @@ export const app = new Frog({
 interface MoxieUserInfo {
   profileName: string | null;
   profileImage: string | null;
+  followerCount: number;
   todayEarnings: string;
   lifetimeEarnings: string;
   farScore: number | null;
@@ -62,36 +63,48 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
   const variables = { fid: `fc_fid:${fid}` };
 
   try {
-    console.log('Fetching user data...');
+    console.log('Sending query to Airstack API...');
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': AIRSTACK_API_KEY
+        'Authorization': AIRSTACK_API_KEY,
       },
-      body: JSON.stringify({ query, variables })
+      body: JSON.stringify({ query, variables }),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('API error:', response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('User data response:', JSON.stringify(data, null, 2));  // Log the full response
+    console.log('API response data:', JSON.stringify(data, null, 2));
+
+    if (data.errors) {
+      console.error('GraphQL Errors:', data.errors);
+      throw new Error('GraphQL errors in the response');
+    }
 
     const socialInfo = data.data?.Socials?.Social?.[0] || {};
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
 
+    console.log('Parsed social info:', socialInfo);
+    console.log('Today Earnings:', todayEarnings);
+    console.log('Lifetime Earnings:', lifetimeEarnings);
+
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
+      followerCount: socialInfo.followerCount || 0,
       todayEarnings,
       lifetimeEarnings,
-      farScore: socialInfo.farcasterScore?.farScore || null  // Check for the presence of farScore
+      farScore: socialInfo.farcasterScore?.farScore || null,
     };
   } catch (error) {
-    console.error('Error in getMoxieUserInfo:', error);
+    console.error('Detailed error in getMoxieUserInfo:', error);
     throw error;
   }
 }
@@ -217,6 +230,7 @@ app.frame('/check', async (c) => {
           </div>
           
           {/* The $MOXIE Earnings title is hidden here */}
+          <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
       ),
       intents: [
