@@ -35,14 +35,7 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
           profileName
           profileImage
           followerCount
-          userAddressDetails {
-            tokenBalances(
-              input: {filter: {tokenAddress: {_eq: "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed"}}, blockchain: base}
-            ) {
-              amount
-              formattedAmount
-            }
-          }
+          userAssociatedAddresses
         }
       }
     }
@@ -53,7 +46,7 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
   console.log('Variables:', JSON.stringify(variables, null, 2));
 
   try {
-    console.log('Fetching $DEGEN balance for FID:', fid);
+    console.log('Fetching $DEGEN tipping balance for FID:', fid);
 
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
@@ -84,8 +77,12 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     const profileImage = socialData.profileImage;
     console.log('Profile image URL:', profileImage);
 
-    const degenBalance = socialData.userAddressDetails?.[0]?.tokenBalances?.[0]?.formattedAmount || '0';
-    console.log('$DEGEN balance:', degenBalance);
+    // Get the user's associated addresses
+    const userAddresses = socialData.userAssociatedAddresses || [];
+
+    // Now we need to fetch the $DEGEN balance for the tipping contract
+    // This requires another API call to get the token balance
+    const degenBalance = await getDegenTippingBalance(userAddresses);
 
     return {
       profileName: socialData.profileName || null,
@@ -96,6 +93,51 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
   } catch (error) {
     console.error('Detailed error in getDegenUserInfo:', error);
     throw error;
+  }
+}
+
+async function getDegenTippingBalance(addresses: string[]): Promise<string> {
+  const DEGEN_TIPPING_CONTRACT = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed";
+  const query = `
+    query DegenTippingBalance($addresses: [Address!]!, $tokenAddress: Address!) {
+      TokenBalances(
+        input: {filter: {owner: {_in: $addresses}, tokenAddress: {_eq: $tokenAddress}}, blockchain: base}
+      ) {
+        TokenBalance {
+          amount
+          formattedAmount
+        }
+      }
+    }
+  `;
+
+  const variables = { 
+    addresses: addresses,
+    tokenAddress: DEGEN_TIPPING_CONTRACT
+  };
+
+  try {
+    const response = await fetch(AIRSTACK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': AIRSTACK_API_KEY
+      },
+      body: JSON.stringify({ query, variables })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Degen Tipping Balance API response:', JSON.stringify(data, null, 2));
+
+    const balance = data.data?.TokenBalances?.TokenBalance?.[0]?.formattedAmount || "0";
+    return balance;
+  } catch (error) {
+    console.error('Error fetching DEGEN tipping balance:', error);
+    return "0";
   }
 }
 
