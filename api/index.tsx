@@ -103,36 +103,13 @@ app.frame('/', (c) => {
   return c.res({
     image: (
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
         width: '100%',
         height: '100%',
         backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdwBfrmugTHyChLfaA9AaV6AjqasvoaVZjP1A6aBzRai9)',
-        backgroundSize: 'contain', // Ensures the image fits within the container without being zoomed in
+        backgroundSize: 'contain',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
-        padding: '20px',
-        boxSizing: 'border-box',
-      }}>
-        <h1 style={{
-          fontFamily: 'Arial, sans-serif',
-          fontSize: '60px',
-          marginBottom: '18px',
-          textAlign: 'center',
-          color: 'white',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-        }}>$DEGEN Balance Tracker</h1>
-        <p style={{
-          fontFamily: 'Arial, sans-serif',
-          fontSize: '36px',
-          marginBottom: '40px',
-          textAlign: 'center',
-          color: 'white',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-        }}>Click to check your $DEGEN tipping balance</p>
-      </div>
+      }}></div>
     ),
     intents: [
       <Button action="/check">Check Balance</Button>,
