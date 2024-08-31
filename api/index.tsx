@@ -2,9 +2,22 @@ import { Button, Frog } from 'frog';
 import { handle } from 'frog/vercel';
 import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
+import { ethers } from 'ethers';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
 const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
+const BASE_RPC_URL = 'https://mainnet.base.org'; // Base network RPC URL
+const DEGEN_TIPPING_CONTRACT = '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed';
+
+const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
+
+const TIPPING_ABI = [
+  "function dailyAllocation() view returns (uint256)",
+  "function balanceOf(address account) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
+
+const tippingContract = new ethers.Contract(DEGEN_TIPPING_CONTRACT, TIPPING_ABI, provider);
 
 export const app = new Frog({
   basePath: '/api',
@@ -23,6 +36,7 @@ interface DegenUserInfo {
   followerCount: number;
   dailyAllocation: string;
   currentBalance: string;
+  farScore: number | null;
 }
 
 async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
@@ -39,29 +53,15 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
           profileImage
           followerCount
           userAssociatedAddresses
-        }
-      }
-    }
-  `;
-
-  const tippingQuery = `
-    query GetDegenTippingInfo($fid: String!) {
-      FarcasterMoxieEarningStats(
-        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
-      ) {
-        FarcasterMoxieEarningStat {
-          allEarningsAmount
-          castEarningsAmount
-          entityId
-          entityType
-          timeframe
+          farcasterScore {
+            farScore
+          }
         }
       }
     }
   `;
 
   const socialVariables = { fid: `fc_fid:${fid}` };
-  const tippingVariables = { fid: `fc_fid:${fid}` };
 
   try {
     // Fetch social data
@@ -83,35 +83,33 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     console.log('Social data response:', JSON.stringify(socialData, null, 2));
     const socialInfo = socialData.data?.Socials?.Social?.[0] || {};
 
-    // Fetch tipping data
-    console.log('Fetching tipping data...');
-    const tippingResponse = await fetch(AIRSTACK_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': AIRSTACK_API_KEY
-      },
-      body: JSON.stringify({ query: tippingQuery, variables: tippingVariables })
-    });
+    // Get the user's associated address (assuming the first one is the primary)
+    const userAddress = socialInfo.userAssociatedAddresses?.[0];
 
-    if (!tippingResponse.ok) {
-      throw new Error(`Tipping data HTTP error! status: ${tippingResponse.status}`);
+    if (!userAddress) {
+      throw new Error('No associated address found for the user');
     }
 
-    const tippingData = await tippingResponse.json();
-    console.log('Tipping data response:', JSON.stringify(tippingData, null, 2));
-    const tippingInfo = tippingData.data?.FarcasterMoxieEarningStats?.FarcasterMoxieEarningStat?.[0] || {};
+    // Fetch tipping data from the smart contract
+    console.log('Fetching tipping data from smart contract...');
+    const [dailyAllocation, currentBalance, decimals] = await Promise.all([
+      tippingContract.dailyAllocation(),
+      tippingContract.balanceOf(userAddress),
+      tippingContract.decimals()
+    ]);
 
-    // Parse the tipping information
-    const dailyAllocation = tippingInfo.allEarningsAmount || '0';
-    const currentBalance = tippingInfo.castEarningsAmount || '0';
+    const formattedDailyAllocation = ethers.formatUnits(dailyAllocation, decimals);
+    const formattedCurrentBalance = ethers.formatUnits(currentBalance, decimals);
+
+    console.log('Tipping data:', { dailyAllocation: formattedDailyAllocation, currentBalance: formattedCurrentBalance });
 
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
       followerCount: socialInfo.followerCount || 0,
-      dailyAllocation,
-      currentBalance
+      dailyAllocation: formattedDailyAllocation,
+      currentBalance: formattedCurrentBalance,
+      farScore: socialInfo.farcasterScore?.farScore || null
     };
   } catch (error) {
     console.error('Error in getDegenUserInfo:', error);
@@ -229,6 +227,16 @@ app.frame('/check', async (c) => {
             }}>
               FID: {fid}
             </p>
+            {userInfo.farScore !== null && (
+              <p style={{ 
+                fontSize: '20px', 
+                marginTop: '5px', 
+                color: 'white', 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+              }}>
+                Farscore: {userInfo.farScore}
+              </p>
+            )}
           </div>
           
           <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>$DEGEN Tipping Info</h1>
