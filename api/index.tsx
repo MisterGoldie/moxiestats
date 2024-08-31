@@ -99,7 +99,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 }
 
 app.frame('/', (c) => {
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdwBfrmugTHyChLfaA9AaV6AjqasvoaVZjP1A6aBzRai9';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmYM1zqkhqLr8aMwbHLqiKhgyZKg35hAU98ASz5M76pt26';
   
   return c.res({
     image: (
