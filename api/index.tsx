@@ -100,16 +100,29 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
 }
 
 app.frame('/', (c) => {
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdwBfrmugTHyChLfaA9AaV6AjqasvoaVZjP1A6aBzRai9';
+  
   return c.res({
     image: (
       <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         width: '100%',
         height: '100%',
-        backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdwBfrmugTHyChLfaA9AaV6AjqasvoaVZjP1A6aBzRai9)',
-        backgroundSize: 'contain',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
-      }}></div>
+        backgroundColor: '#1DA1F2', // Fallback background color
+      }}>
+        <img
+          src={backgroundImageUrl}
+          alt="Background"
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+          }}
+        />
+      </div>
     ),
     intents: [
       <Button action="/check">Check Balance</Button>,
