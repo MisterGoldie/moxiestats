@@ -158,77 +158,21 @@ app.frame('/check', async (c) => {
     return c.res({
       image: (
         <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: '20px', 
+          backgroundColor: '#f0f0f0',
+          fontFamily: 'Arial, sans-serif',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
           boxSizing: 'border-box',
-          position: 'relative'
         }}>
-          <div style={{
-            position: 'absolute',
-            top: '30px',
-            left: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}>
-            {pfpUrl ? (
-              <img 
-                src={pfpUrl} 
-                alt="Profile" 
-                style={{ 
-                  width: '160px', 
-                  height: '160px', 
-                  borderRadius: '50%',
-                  border: '3px solid black'
-                }}
-              />
-            ) : (
-              <div style={{ 
-                width: '160px', 
-                height: '160px', 
-                borderRadius: '50%', 
-                backgroundColor: '#ccc', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                border: '3px solid black',
-                fontSize: '80px',
-                color: '#333'
-              }}>
-                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-              </div>
-            )}
-            <p style={{ 
-              fontSize: '24px', 
-              marginTop: '10px', 
-              color: 'black', 
-            }}>
-              FID: {fid}
-            </p>
-          </div>
-          
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            padding: '20px',
-            borderRadius: '10px'
-          }}>
-            <h2 style={{ fontSize: '48px', color: 'black', marginBottom: '20px' }}>$MOXIE Earnings</h2>
-            <p style={{ fontSize: '36px', color: 'black', marginBottom: '10px' }}>Today: {userInfo.todayEarnings} $MOXIE</p>
-            <p style={{ fontSize: '36px', color: 'black' }}>All-Time: {userInfo.lifetimeEarnings} $MOXIE</p>
-          </div>
+          <h1 style={{ fontSize: '48px', marginBottom: '20px', color: '#333' }}>$MOXIE Earnings</h1>
+          <p style={{ fontSize: '36px', marginBottom: '10px', color: '#333' }}>FID: {fid}</p>
+          <p style={{ fontSize: '36px', marginBottom: '10px', color: '#333' }}>Today: {userInfo.todayEarnings} $MOXIE</p>
+          <p style={{ fontSize: '36px', color: '#333' }}>All-Time: {userInfo.lifetimeEarnings} $MOXIE</p>
         </div>
       ),
       intents: [
