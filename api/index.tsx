@@ -106,7 +106,7 @@ app.frame('/', (c) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         width: '100%',
         height: '100%',
         backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmejSuB28UbCignQSyvsR5sF1ffc7Fz3XX362UMdupyxJS)',
@@ -119,7 +119,7 @@ app.frame('/', (c) => {
         <h1 style={{
           fontFamily: 'Arial, sans-serif',
           fontSize: '60px',
-          marginBottom: '20px',
+          marginBottom: '10px',
           textAlign: 'center',
           color: 'white',
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
@@ -127,7 +127,7 @@ app.frame('/', (c) => {
         <p style={{
           fontFamily: 'Arial, sans-serif',
           fontSize: '36px',
-          marginBottom: '40px',
+          marginBottom: '20px',
           textAlign: 'center',
           color: 'white',
           textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
