@@ -9,7 +9,7 @@ const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API
 export const app = new Frog({
   basePath: '/api',
   imageOptions: { width: 1200, height: 630 },
-  title: '$MOXIE Earnings Tracker',
+  title: '$MOXIE Earnings Tracker',  // Keeping the title as it was
 }).use(
   neynar({
     apiKey: 'NEYNAR_FROG_FM',
@@ -35,6 +35,10 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
         Social {
           profileName
           profileImage
+          followerCount
+          farcasterScore {
+            farScore
+          }
         }
       }
       todayEarnings: FarcasterMoxieEarningStats(
@@ -58,9 +62,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 
   try {
     console.log('Sending query to Airstack API...');
-    console.log('Query:', query);
-    console.log('Variables:', JSON.stringify(variables, null, 2));
-
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
@@ -215,20 +216,8 @@ app.frame('/check', async (c) => {
             </p>
           </div>
           
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            padding: '20px',
-            borderRadius: '10px'
-          }}>
-            <h2 style={{ fontSize: '48px', color: 'black', marginBottom: '20px' }}>$MOXIE Earnings</h2>
-            <p style={{ fontSize: '36px', color: 'black', marginBottom: '10px' }}>Today: {userInfo.todayEarnings} $MOXIE</p>
-            <p style={{ fontSize: '36px', color: 'black' }}>All-Time: {userInfo.lifetimeEarnings} $MOXIE</p>
-          </div>
+          {/* The $MOXIE Earnings title is hidden here */}
+
         </div>
       ),
       intents: [
