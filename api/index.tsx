@@ -110,7 +110,7 @@ app.frame('/', (c) => {
         width: '100%',
         height: '100%',
         backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmbqmcXnTGS9wnK8UNTta883y6p5R44cvKmpm7rhs9pBAG)',
-        backgroundSize: 'cover',
+        backgroundSize: 'contain',
         backgroundPosition: 'center',
         padding: '20px',
         boxSizing: 'border-box',
