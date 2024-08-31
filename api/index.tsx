@@ -21,7 +21,8 @@ interface DegenUserInfo {
   profileName: string | null;
   profileImage: string | null;
   followerCount: number;
-  degenBalance: string;
+  dailyAllocation: string;
+  currentBalance: string;
 }
 
 async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
@@ -42,12 +43,8 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
   `;
 
   const variables = { fid: `fc_fid:${fid}` };
-  console.log('Query:', query);
-  console.log('Variables:', JSON.stringify(variables, null, 2));
 
   try {
-    console.log('Fetching $DEGEN tipping balance for FID:', fid);
-
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
@@ -58,54 +55,47 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Airstack API Error:', response.status, errorText);
-      throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Full Airstack API response:', JSON.stringify(data, null, 2));
-
-    if (data.errors) {
-      console.error('GraphQL Errors:', data.errors);
-      throw new Error('GraphQL errors in the response');
-    }
-
     const socialData = data.data?.Socials?.Social?.[0] || {};
-    console.log('Social data:', socialData);
-
-    const profileImage = socialData.profileImage;
-    console.log('Profile image URL:', profileImage);
-
-    // Get the user's associated addresses
     const userAddresses = socialData.userAssociatedAddresses || [];
 
-    // Now we need to fetch the $DEGEN balance for the tipping contract
-    // This requires another API call to get the token balance
-    const degenBalance = await getDegenTippingBalance(userAddresses);
+    // Fetch both daily allocation and current balance
+    const { dailyAllocation, currentBalance } = await getDegenTippingInfo(userAddresses);
 
     return {
       profileName: socialData.profileName || null,
-      profileImage: profileImage,
+      profileImage: socialData.profileImage || null,
       followerCount: socialData.followerCount || 0,
-      degenBalance: degenBalance
+      dailyAllocation,
+      currentBalance
     };
   } catch (error) {
-    console.error('Detailed error in getDegenUserInfo:', error);
+    console.error('Error in getDegenUserInfo:', error);
     throw error;
   }
 }
 
-async function getDegenTippingBalance(addresses: string[]): Promise<string> {
+async function getDegenTippingInfo(addresses: string[]): Promise<{ dailyAllocation: string, currentBalance: string }> {
   const DEGEN_TIPPING_CONTRACT = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed";
+  const DEGEN_TOKEN_ADDRESS = "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed"; // Assuming this is the correct token address
+
   const query = `
-    query DegenTippingBalance($addresses: [Address!]!, $tokenAddress: Address!) {
+    query DegenTippingInfo($addresses: [Address!]!, $tokenAddress: Address!, $tippingContract: Address!) {
       TokenBalances(
         input: {filter: {owner: {_in: $addresses}, tokenAddress: {_eq: $tokenAddress}}, blockchain: base}
       ) {
         TokenBalance {
-          amount
           formattedAmount
+        }
+      }
+      ContractFunctions(
+        input: {filter: {address: {_eq: $tippingContract}, functionName: {_eq: "getDailyAllocation"}}, blockchain: base}
+      ) {
+        FunctionCall {
+          outputValues
         }
       }
     }
@@ -113,7 +103,8 @@ async function getDegenTippingBalance(addresses: string[]): Promise<string> {
 
   const variables = { 
     addresses: addresses,
-    tokenAddress: DEGEN_TIPPING_CONTRACT
+    tokenAddress: DEGEN_TOKEN_ADDRESS,
+    tippingContract: DEGEN_TIPPING_CONTRACT
   };
 
   try {
@@ -131,13 +122,15 @@ async function getDegenTippingBalance(addresses: string[]): Promise<string> {
     }
 
     const data = await response.json();
-    console.log('Degen Tipping Balance API response:', JSON.stringify(data, null, 2));
+    console.log('Degen Tipping Info API response:', JSON.stringify(data, null, 2));
 
-    const balance = data.data?.TokenBalances?.TokenBalance?.[0]?.formattedAmount || "0";
-    return balance;
+    const currentBalance = data.data?.TokenBalances?.TokenBalance?.[0]?.formattedAmount || "0";
+    const dailyAllocation = data.data?.ContractFunctions?.FunctionCall?.[0]?.outputValues?.[0] || "0";
+
+    return { dailyAllocation, currentBalance };
   } catch (error) {
-    console.error('Error fetching DEGEN tipping balance:', error);
-    return "0";
+    console.error('Error fetching DEGEN tipping info:', error);
+    return { dailyAllocation: "0", currentBalance: "0" };
   }
 }
 
@@ -166,17 +159,10 @@ app.frame('/', (c) => {
 });
 
 app.frame('/check', async (c) => {
-  console.log('Full frameData:', JSON.stringify(c.frameData, null, 2));
-
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
-  console.log('FID:', fid);
-  console.log('Display Name:', displayName);
-  console.log('Profile Picture URL:', pfpUrl);
-
   if (!fid) {
-    console.error('No FID found in frameData');
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
@@ -192,7 +178,6 @@ app.frame('/check', async (c) => {
 
   try {
     const userInfo = await getDegenUserInfo(fid.toString());
-    console.log('Retrieved user info:', userInfo);
 
     return c.res({
       image: (
@@ -210,7 +195,6 @@ app.frame('/check', async (c) => {
           boxSizing: 'border-box',
           position: 'relative'
         }}>
-          {/* Profile picture in top left corner with FID underneath */}
           <div style={{
             position: 'absolute',
             top: '30px',
@@ -256,8 +240,9 @@ app.frame('/check', async (c) => {
             </p>
           </div>
           
-          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>Tip balance</h1>
-          <p style={{ fontSize: '52px', textAlign: 'center' }}>Balance: {userInfo.degenBalance} $DEGEN</p>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>$DEGEN Tipping Info</h1>
+          <p style={{ fontSize: '40px', textAlign: 'center' }}>Daily Allocation: {userInfo.dailyAllocation} $DEGEN</p>
+          <p style={{ fontSize: '40px', textAlign: 'center' }}>Current Balance: {userInfo.currentBalance} $DEGEN</p>
           <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
       ),
@@ -267,11 +252,9 @@ app.frame('/check', async (c) => {
       ]
     });
   } catch (error) {
-    console.error('Detailed error in balance check:', error);
-    let errorMessage = 'Unable to fetch $DEGEN balance. Please try again later.';
-    if (error instanceof Error) {
-      errorMessage += ` Error: ${error.message}`;
-    }
+    console.error('Error in balance check:', error);
+    let errorMessage = 'Unable to fetch $DEGEN info. Please try again later.';
+    if (error instanceof Error) errorMessage += ` Error: ${error.message}`;
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
