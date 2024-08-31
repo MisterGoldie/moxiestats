@@ -26,6 +26,8 @@ interface DegenUserInfo {
 }
 
 async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
+  console.log(`Fetching info for FID: ${fid}`);
+
   const socialQuery = `
     query DegenTippingBalanceTracker($fid: String!) {
       Socials(
@@ -63,6 +65,7 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
 
   try {
     // Fetch social data
+    console.log('Fetching social data...');
     const socialResponse = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
@@ -73,13 +76,15 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     });
 
     if (!socialResponse.ok) {
-      throw new Error(`HTTP error! status: ${socialResponse.status}`);
+      throw new Error(`Social data HTTP error! status: ${socialResponse.status}`);
     }
 
     const socialData = await socialResponse.json();
+    console.log('Social data response:', JSON.stringify(socialData, null, 2));
     const socialInfo = socialData.data?.Socials?.Social?.[0] || {};
 
     // Fetch tipping data
+    console.log('Fetching tipping data...');
     const tippingResponse = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
@@ -90,10 +95,11 @@ async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
     });
 
     if (!tippingResponse.ok) {
-      throw new Error(`HTTP error! status: ${tippingResponse.status}`);
+      throw new Error(`Tipping data HTTP error! status: ${tippingResponse.status}`);
     }
 
     const tippingData = await tippingResponse.json();
+    console.log('Tipping data response:', JSON.stringify(tippingData, null, 2));
     const tippingInfo = tippingData.data?.FarcasterMoxieEarningStats?.FarcasterMoxieEarningStat?.[0] || {};
 
     // Parse the tipping information
@@ -138,10 +144,14 @@ app.frame('/', (c) => {
 });
 
 app.frame('/check', async (c) => {
+  console.log('Checking balance...');
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
+  console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
+
   if (!fid) {
+    console.error('No FID found in frameData');
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
@@ -156,7 +166,9 @@ app.frame('/check', async (c) => {
   }
 
   try {
+    console.log(`Fetching user info for FID: ${fid}`);
     const userInfo = await getDegenUserInfo(fid.toString());
+    console.log('User info retrieved:', JSON.stringify(userInfo, null, 2));
 
     return c.res({
       image: (
@@ -231,7 +243,7 @@ app.frame('/check', async (c) => {
       ]
     });
   } catch (error) {
-    console.error('Error in balance check:', error);
+    console.error('Detailed error in balance check:', error);
     let errorMessage = 'Unable to fetch $DEGEN info. Please try again later.';
     if (error instanceof Error) errorMessage += ` Error: ${error.message}`;
     return c.res({
