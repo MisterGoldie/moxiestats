@@ -177,8 +177,8 @@ app.frame('/check', async (c) => {
                 position: 'absolute', 
                 top: '30px', 
                 left: '20px', 
-                width: '200px', 
-                height: '200px', 
+                width: '180px', 
+                height: '180px', 
                 borderRadius: '50%',
                 border: '3px solid white'  // Added white border for visibility
               }}
@@ -188,15 +188,15 @@ app.frame('/check', async (c) => {
               position: 'absolute', 
               top: '30px', 
               left: '20px', 
-              width: '200px', 
-              height: '200px', 
+              width: '180px', 
+              height: '180px', 
               borderRadius: '50%', 
               backgroundColor: '#ccc', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
               border: '3px solid white',  // Added white border for visibility
-              fontSize: '100px',
+              fontSize: '90px',
               color: '#333'
             }}>
               {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
