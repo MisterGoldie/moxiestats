@@ -203,7 +203,7 @@ app.frame('/check', async (c) => {
             <p style={{ 
               fontSize: '24px', 
               marginTop: '10px', 
-              color: 'white', 
+              color: 'black', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
               FID: {fid}
