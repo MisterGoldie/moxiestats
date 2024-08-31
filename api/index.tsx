@@ -78,7 +78,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     }
 
     const data = await response.json();
-    console.log('User data response:', JSON.stringify(data, null, 2));
+    console.log('User data response:', JSON.stringify(data, null, 2));  // Log the full response
 
     const socialInfo = data.data?.Socials?.Social?.[0] || {};
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
@@ -90,7 +90,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       followerCount: socialInfo.followerCount || 0,
       todayEarnings,
       lifetimeEarnings,
-      farScore: socialInfo.farcasterScore?.farScore || null
+      farScore: socialInfo.farcasterScore?.farScore || null  // Check for the presence of farScore
     };
   } catch (error) {
     console.error('Error in getMoxieUserInfo:', error);
