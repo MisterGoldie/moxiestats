@@ -185,23 +185,23 @@ app.frame('/check', async (c) => {
                 src={pfpUrl} 
                 alt="Profile" 
                 style={{ 
-                  width: '180px', 
-                  height: '180px', 
+                  width: '160px', 
+                  height: '160px', 
                   borderRadius: '50%',
                   border: '3px solid black'
                 }}
               />
             ) : (
               <div style={{ 
-                width: '180px', 
-                height: '180px', 
+                width: '160px', 
+                height: '160px', 
                 borderRadius: '50%', 
                 backgroundColor: '#ccc', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
                 border: '3px solid black',
-                fontSize: '90px',
+                fontSize: '80px',
                 color: '#333'
               }}>
                 {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
