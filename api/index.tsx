@@ -2,27 +2,14 @@ import { Button, Frog } from 'frog';
 import { handle } from 'frog/vercel';
 import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
-import { ethers } from 'ethers';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
 const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
-const BASE_RPC_URL = 'https://mainnet.base.org'; // Base network RPC URL
-const DEGEN_TIPPING_CONTRACT = '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed';
-
-const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
-
-const TIPPING_ABI = [
-  "function dailyAllocation() view returns (uint256)",
-  "function balanceOf(address account) view returns (uint256)",
-  "function decimals() view returns (uint8)"
-];
-
-const tippingContract = new ethers.Contract(DEGEN_TIPPING_CONTRACT, TIPPING_ABI, provider);
 
 export const app = new Frog({
   basePath: '/api',
   imageOptions: { width: 1200, height: 630 },
-  title: '$DEGEN Tipping Balance Tracker',
+  title: '$MOXIE Earnings Tracker',
 }).use(
   neynar({
     apiKey: 'NEYNAR_FROG_FM',
@@ -30,89 +17,83 @@ export const app = new Frog({
   })
 );
 
-interface DegenUserInfo {
+interface MoxieUserInfo {
   profileName: string | null;
   profileImage: string | null;
   followerCount: number;
-  dailyAllocation: string;
-  currentBalance: string;
+  todayEarnings: string;
+  lifetimeEarnings: string;
   farScore: number | null;
 }
 
-async function getDegenUserInfo(fid: string): Promise<DegenUserInfo> {
+async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
   console.log(`Fetching info for FID: ${fid}`);
 
-  const socialQuery = `
-    query DegenTippingBalanceTracker($fid: String!) {
+  const query = `
+    query UserMoxieEarnings($fid: String!) {
       Socials(
         input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}
       ) {
         Social {
-          dappName
           profileName
           profileImage
           followerCount
-          userAssociatedAddresses
           farcasterScore {
             farScore
           }
         }
       }
+      todayEarnings: FarcasterMoxieEarningStats(
+        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
+      ) {
+        FarcasterMoxieEarningStat {
+          allEarningsAmount
+        }
+      }
+      lifetimeEarnings: FarcasterMoxieEarningStats(
+        input: {timeframe: LIFETIME, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
+      ) {
+        FarcasterMoxieEarningStat {
+          allEarningsAmount
+        }
+      }
     }
   `;
 
-  const socialVariables = { fid: `fc_fid:${fid}` };
+  const variables = { fid: `fc_fid:${fid}` };
 
   try {
-    // Fetch social data
-    console.log('Fetching social data...');
-    const socialResponse = await fetch(AIRSTACK_API_URL, {
+    console.log('Fetching user data...');
+    const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': AIRSTACK_API_KEY
       },
-      body: JSON.stringify({ query: socialQuery, variables: socialVariables })
+      body: JSON.stringify({ query, variables })
     });
 
-    if (!socialResponse.ok) {
-      throw new Error(`Social data HTTP error! status: ${socialResponse.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const socialData = await socialResponse.json();
-    console.log('Social data response:', JSON.stringify(socialData, null, 2));
-    const socialInfo = socialData.data?.Socials?.Social?.[0] || {};
+    const data = await response.json();
+    console.log('User data response:', JSON.stringify(data, null, 2));
 
-    // Get the user's associated address (assuming the first one is the primary)
-    const userAddress = socialInfo.userAssociatedAddresses?.[0];
-
-    if (!userAddress) {
-      throw new Error('No associated address found for the user');
-    }
-
-    // Fetch tipping data from the smart contract
-    console.log('Fetching tipping data from smart contract...');
-    const [dailyAllocation, currentBalance, decimals] = await Promise.all([
-      tippingContract.dailyAllocation(),
-      tippingContract.balanceOf(userAddress),
-      tippingContract.decimals()
-    ]);
-
-    const formattedDailyAllocation = ethers.formatUnits(dailyAllocation, decimals);
-    const formattedCurrentBalance = ethers.formatUnits(currentBalance, decimals);
-
-    console.log('Tipping data:', { dailyAllocation: formattedDailyAllocation, currentBalance: formattedCurrentBalance });
+    const socialInfo = data.data?.Socials?.Social?.[0] || {};
+    const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
+    const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
 
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
       followerCount: socialInfo.followerCount || 0,
-      dailyAllocation: formattedDailyAllocation,
-      currentBalance: formattedCurrentBalance,
+      todayEarnings,
+      lifetimeEarnings,
       farScore: socialInfo.farcasterScore?.farScore || null
     };
   } catch (error) {
-    console.error('Error in getDegenUserInfo:', error);
+    console.error('Error in getMoxieUserInfo:', error);
     throw error;
   }
 }
@@ -136,13 +117,13 @@ app.frame('/', (c) => {
       }} />
     ),
     intents: [
-      <Button action="/check">Check Balance</Button>,
+      <Button action="/check">Check Earnings</Button>,
     ],
   });
 });
 
 app.frame('/check', async (c) => {
-  console.log('Checking balance...');
+  console.log('Checking earnings...');
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
@@ -165,7 +146,7 @@ app.frame('/check', async (c) => {
 
   try {
     console.log(`Fetching user info for FID: ${fid}`);
-    const userInfo = await getDegenUserInfo(fid.toString());
+    const userInfo = await getMoxieUserInfo(fid.toString());
     console.log('User info retrieved:', JSON.stringify(userInfo, null, 2));
 
     return c.res({
@@ -239,9 +220,9 @@ app.frame('/check', async (c) => {
             )}
           </div>
           
-          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>$DEGEN Tipping Info</h1>
-          <p style={{ fontSize: '40px', textAlign: 'center' }}>Daily Allocation: {userInfo.dailyAllocation} $DEGEN</p>
-          <p style={{ fontSize: '40px', textAlign: 'center' }}>Current Balance: {userInfo.currentBalance} $DEGEN</p>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', textAlign: 'center' }}>$MOXIE Earnings</h1>
+          <p style={{ fontSize: '40px', textAlign: 'center' }}>Today: {userInfo.todayEarnings} $MOXIE</p>
+          <p style={{ fontSize: '40px', textAlign: 'center' }}>All-Time: {userInfo.lifetimeEarnings} $MOXIE</p>
           <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center' }}>Followers: {userInfo.followerCount}</p>
         </div>
       ),
@@ -251,8 +232,8 @@ app.frame('/check', async (c) => {
       ]
     });
   } catch (error) {
-    console.error('Detailed error in balance check:', error);
-    let errorMessage = 'Unable to fetch $DEGEN info. Please try again later.';
+    console.error('Detailed error in earnings check:', error);
+    let errorMessage = 'Unable to fetch $MOXIE info. Please try again later.';
     if (error instanceof Error) errorMessage += ` Error: ${error.message}`;
     return c.res({
       image: (
