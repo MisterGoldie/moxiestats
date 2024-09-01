@@ -1,6 +1,10 @@
 import { Button, Frog } from 'frog';
 import { handle } from 'frog/vercel';
+import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
+
+const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
+const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
 
 export const app = new Frog({
   basePath: '/api',
@@ -22,15 +26,72 @@ interface MoxieUserInfo {
 }
 
 async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
-  // Placeholder implementation
   console.log(`Fetching info for FID: ${fid}`);
-  return {
-    profileName: null,
-    profileImage: null,
-    todayEarnings: '0',
-    lifetimeEarnings: '0',
-    farScore: null
-  };
+
+  const query = `
+    query MoxieEarnings($fid: String!) {
+      socialInfo: Socials(
+        input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}
+      ) {
+        Social {
+          profileName
+          profileImage
+          farcasterScore {
+            farScore
+          }
+        }
+      }
+      todayEarnings: FarcasterMoxieEarningStats(
+        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
+      ) {
+        FarcasterMoxieEarningStat {
+          allEarningsAmount
+        }
+      }
+      lifetimeEarnings: FarcasterMoxieEarningStats(
+        input: {timeframe: LIFETIME, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
+      ) {
+        FarcasterMoxieEarningStat {
+          allEarningsAmount
+        }
+      }
+    }
+  `;
+
+  const variables = { fid: fid };
+
+  try {
+    const response = await fetch(AIRSTACK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': AIRSTACK_API_KEY,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    const socialInfo = data.data?.socialInfo?.Social?.[0] || {};
+    const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
+    const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
+    const farScore = socialInfo.farcasterScore?.farScore || null;
+
+    return {
+      profileName: socialInfo.profileName || null,
+      profileImage: socialInfo.profileImage || null,
+      todayEarnings: todayEarnings,
+      lifetimeEarnings: lifetimeEarnings,
+      farScore: farScore,
+    };
+  } catch (error) {
+    console.error('Error in getMoxieUserInfo:', error);
+    throw error;
+  }
 }
 
 app.frame('/', (c) => {
@@ -184,7 +245,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
-        <Button.Reset>Share</Button.Reset>
+        <Button.Mint target="/mint">Share My $MOXIE Stats</Button.Mint>
       ]
     });
   } catch (renderError) {
@@ -204,6 +265,31 @@ app.frame('/check', async (c) => {
       ]
     });
   }
+});
+
+app.frame('/mint', (c) => {
+  const { fid } = c.frameData || {};
+  // Here you would typically generate the content to be minted
+  // For now, we'll just return a simple message
+  return c.res({
+    image: (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#1DA1F2',
+        color: 'white',
+        fontSize: '24px',
+      }}>
+        $MOXIE Stats shared successfully!
+      </div>
+    ),
+    intents: [
+      <Button action="/check">Back to Stats</Button>
+    ],
+  });
 });
 
 export const GET = handle(app);
