@@ -171,116 +171,63 @@ app.frame('/check', async (c) => {
   const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj';
 
   console.log('Rendering frame');
-  try {
-    return c.res({
-      image: (
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          width: '100%', 
-          height: '100%', 
-          backgroundImage: `url(${backgroundImageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: '20px', 
-          boxSizing: 'border-box',
-          position: 'relative'
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: '30px',
-            left: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}>
-            {pfpUrl ? (
-              <img 
-                src={pfpUrl} 
-                alt="Profile" 
-                style={{ 
-                  width: '180px', 
-                  height: '180px', 
-                  borderRadius: '50%',
-                  border: '3px solid black'
-                }}
-              />
-            ) : (
-              <div style={{ 
-                width: '180px', 
-                height: '180px', 
-                borderRadius: '50%', 
-                backgroundColor: '#ccc', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                border: '3px solid black',
-                fontSize: '90px',
-                color: '#333'
-              }}>
-                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-              </div>
-            )}
-            <p style={{ 
-              fontSize: '24px', 
-              marginTop: '10px', 
-              color: 'white', 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-            }}>
-              FID: {fid}
-            </p>
-            {userInfo && userInfo.farScore !== null && (
-              <p style={{ 
-                fontSize: '20px', 
-                marginTop: '5px', 
-                color: 'white', 
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-              }}>
-                Farscore: {userInfo.farScore.toFixed(2)}
-              </p>
-            )}
-          </div>
-          
-          {errorMessage ? (
-            <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
-          ) : userInfo ? (
-            <div style={{ position: 'absolute', top: '35%', right: '15%', textAlign: 'right' }}>
-              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {userInfo.todayEarnings || '0'} $MOXIE
-              </p>
-              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {userInfo.lifetimeEarnings || '0'} $MOXIE
-              </p>
-            </div>
-          ) : (
-            <p style={{ fontSize: '24px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+  return c.res({
+    image: (
+      <div style={{ 
+        width: '100%', 
+        height: '100%', 
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        fontFamily: 'Arial, sans-serif',
+        color: 'white',
+        position: 'relative'
+      }}>
+        {pfpUrl && (
+          <img 
+            src={pfpUrl} 
+            alt="Profile" 
+            style={{ 
+              position: 'absolute',
+              top: '20px',
+              left: '20px',
+              width: '100px', 
+              height: '100px', 
+              borderRadius: '50%',
+              border: '2px solid white'
+            }}
+          />
+        )}
+        <div style={{ position: 'absolute', top: '20px', left: '140px' }}>
+          <p>FID: {fid}</p>
+          {userInfo && userInfo.farScore !== null && (
+            <p>Farscore: {userInfo.farScore.toFixed(2)}</p>
           )}
         </div>
-      ),
-      intents: [
-        <Button action="/">Back</Button>,
-        <Button action="/check">Refresh</Button>
-      ]
-    });
-  } catch (renderError) {
-    console.error('Error rendering frame:', renderError);
-    return c.res({
-      image: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Render Error</h1>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>
-            {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
-          </p>
+        <div style={{ position: 'absolute', top: '50%', right: '20px', textAlign: 'right' }}>
+          {userInfo && (
+            <>
+              <p style={{ fontSize: '24px', marginBottom: '10px' }}>
+                {userInfo.todayEarnings || '0'} $MOXIE
+              </p>
+              <p style={{ fontSize: '24px', marginBottom: '10px' }}>
+                {userInfo.lifetimeEarnings || '0'} $MOXIE
+              </p>
+            </>
+          )}
         </div>
-      ),
-      intents: [
-        <Button action="/">Back</Button>,
-        <Button action="/check">Retry</Button>
-      ]
-    });
-  }
+        {errorMessage && (
+          <p style={{ position: 'absolute', bottom: '20px', left: '20px', color: 'red' }}>
+            Error: {errorMessage}
+          </p>
+        )}
+      </div>
+    ),
+    intents: [
+      <Button action="/">Back</Button>,
+      <Button action="/check">Refresh</Button>
+    ]
+  });
 });
 
 export const GET = handle(app);
