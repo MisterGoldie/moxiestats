@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmV7QauPh2o5JKJJJgWJgGn122R99T1uzt2C1h4cPDBW5D';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeaPoTkbWEhnH8mfwrGxoSFVcEFiyFmiBGAsFAnJcP6z2';
 
   console.log('Rendering frame');
   try {
