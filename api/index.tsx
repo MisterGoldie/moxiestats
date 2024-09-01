@@ -261,7 +261,7 @@ app.frame('/check', async (c) => {
       ),
       intents: [
         <Button action="/">Back</Button>,
-        <Button action="/check">Refresh</Button>
+        <Button action="/check">Refresh</Button>,
       ]
     });
   } catch (renderError) {
