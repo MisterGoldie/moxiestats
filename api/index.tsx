@@ -201,16 +201,16 @@ app.frame('/check', async (c) => {
                 src={pfpUrl} 
                 alt="Profile" 
                 style={{ 
-                  width: '160px', 
-                  height: '160px', 
+                  width: '150px', 
+                  height: '150px', 
                   borderRadius: '50%',
                   border: '3px solid black'
                 }}
               />
             ) : (
               <div style={{ 
-                width: '160px', 
-                height: '160px', 
+                width: '150px', 
+                height: '150px', 
                 borderRadius: '50%', 
                 backgroundColor: '#ccc', 
                 display: 'flex', 
@@ -224,7 +224,7 @@ app.frame('/check', async (c) => {
               </div>
             )}
             <p style={{ 
-              fontSize: '30px', 
+              fontSize: '26px', 
               marginTop: '10px', 
               color: 'black', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
@@ -233,7 +233,7 @@ app.frame('/check', async (c) => {
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
-                fontSize: '25px', 
+                fontSize: '22px', 
                 marginTop: '5px', 
                 color: 'black', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
@@ -269,8 +269,8 @@ app.frame('/check', async (c) => {
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '50px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
-          <p style={{ fontSize: '40px', textAlign: 'center', color: 'black' }}>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
+          <p style={{ fontSize: '50px', textAlign: 'center', color: 'black' }}>
             {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
           </p>
         </div>
