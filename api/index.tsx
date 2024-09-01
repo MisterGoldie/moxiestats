@@ -247,15 +247,15 @@ app.frame('/check', async (c) => {
             <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
                 {userInfo.todayEarnings || '0'} $MOXIE
               </p>
-              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
                 {userInfo.lifetimeEarnings || '0'} $MOXIE
               </p>
             </div>
           ) : (
-            <p style={{ fontSize: '24px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+            <p style={{ fontSize: '24px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
           )}
         </div>
       ),
@@ -269,8 +269,8 @@ app.frame('/check', async (c) => {
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Render Error</h1>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>
+          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
+          <p style={{ fontSize: '24px', textAlign: 'center', color: 'black' }}>
             {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
           </p>
         </div>
