@@ -246,7 +246,7 @@ app.frame('/check', async (c) => {
           {errorMessage ? (
             <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
-            <div style={{ position: 'absolute', top: '40%', right: '15%', textAlign: 'right' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
                 {userInfo.todayEarnings || '0'} $MOXIE
               </p>
