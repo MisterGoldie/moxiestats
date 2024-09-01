@@ -224,7 +224,7 @@ app.frame('/check', async (c) => {
               </div>
             )}
             <p style={{ 
-              fontSize: '40px', 
+              fontSize: '30px', 
               marginTop: '10px', 
               color: 'black', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
@@ -233,7 +233,7 @@ app.frame('/check', async (c) => {
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
-                fontSize: '35px', 
+                fontSize: '25px', 
                 marginTop: '5px', 
                 color: 'black', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
