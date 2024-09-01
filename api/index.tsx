@@ -246,7 +246,7 @@ app.frame('/check', async (c) => {
           {errorMessage ? (
             <p style={{ fontSize: '38px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'right' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
                 {userInfo.todayEarnings || '0'} $MOXIE
               </p>
@@ -262,6 +262,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
+
       ]
     });
   } catch (renderError) {
