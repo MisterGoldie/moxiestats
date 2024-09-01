@@ -260,7 +260,7 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="/">Back</Button>,
+        <Button action="https://moxiestats.vercel.app/api">Share</Button>,
         <Button action="/check">Refresh</Button>,
 
       ]
