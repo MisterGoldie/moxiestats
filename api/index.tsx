@@ -201,16 +201,16 @@ app.frame('/check', async (c) => {
                 src={pfpUrl} 
                 alt="Profile" 
                 style={{ 
-                  width: '180px', 
-                  height: '180px', 
+                  width: '160px', 
+                  height: '160px', 
                   borderRadius: '50%',
                   border: '3px solid black'
                 }}
               />
             ) : (
               <div style={{ 
-                width: '180px', 
-                height: '180px', 
+                width: '160px', 
+                height: '160px', 
                 borderRadius: '50%', 
                 backgroundColor: '#ccc', 
                 display: 'flex', 
@@ -224,18 +224,18 @@ app.frame('/check', async (c) => {
               </div>
             )}
             <p style={{ 
-              fontSize: '24px', 
+              fontSize: '40px', 
               marginTop: '10px', 
-              color: 'white', 
+              color: 'black', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
               FID: {fid}
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
-                fontSize: '20px', 
+                fontSize: '35px', 
                 marginTop: '5px', 
-                color: 'white', 
+                color: 'black', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
               }}>
                 Farscore: {userInfo.farScore.toFixed(2)}
