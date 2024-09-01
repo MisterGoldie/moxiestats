@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva';
 
   console.log('Rendering frame');
   try {
@@ -226,7 +226,7 @@ app.frame('/check', async (c) => {
             <p style={{ 
               fontSize: '24px', 
               marginTop: '10px', 
-              color: 'black', 
+              color: 'white', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
               FID: {fid}
@@ -235,7 +235,7 @@ app.frame('/check', async (c) => {
               <p style={{ 
                 fontSize: '20px', 
                 marginTop: '5px', 
-                color: 'black', 
+                color: 'white', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
               }}>
                 Farscore: {userInfo.farScore.toFixed(2)}
@@ -246,12 +246,16 @@ app.frame('/check', async (c) => {
           {errorMessage ? (
             <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
-            <>
-              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Today: {userInfo.todayEarnings || '0'} $MOXIE</p>
-              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo.lifetimeEarnings || '0'} $MOXIE</p>
-            </>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+                {userInfo.todayEarnings || '0'} $MOXIE
+              </p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+                {userInfo.lifetimeEarnings || '0'} $MOXIE
+              </p>
+            </div>
           ) : (
-            <p style={{ fontSize: '24px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+            <p style={{ fontSize: '24px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
           )}
         </div>
       ),
@@ -265,8 +269,8 @@ app.frame('/check', async (c) => {
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'black' }}>
+          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Render Error</h1>
+          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>
             {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
           </p>
         </div>
