@@ -1,10 +1,6 @@
 import { Button, Frog } from 'frog';
 import { handle } from 'frog/vercel';
-import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
-
-const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
-const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
 
 export const app = new Frog({
   basePath: '/api',
@@ -26,89 +22,15 @@ interface MoxieUserInfo {
 }
 
 async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
+  // Placeholder implementation
   console.log(`Fetching info for FID: ${fid}`);
-
-  const query = `
-    query MoxieEarnings($fid: String!) {
-      socialInfo: Socials(
-        input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}
-      ) {
-        Social {
-          profileName
-          profileImage
-          farcasterScore {
-            farScore
-          }
-        }
-      }
-      todayEarnings: FarcasterMoxieEarningStats(
-        input: {timeframe: TODAY, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
-      ) {
-        FarcasterMoxieEarningStat {
-          allEarningsAmount
-        }
-      }
-      lifetimeEarnings: FarcasterMoxieEarningStats(
-        input: {timeframe: LIFETIME, blockchain: ALL, filter: {entityType: {_eq: USER}, entityId: {_eq: $fid}}}
-      ) {
-        FarcasterMoxieEarningStat {
-          allEarningsAmount
-        }
-      }
-    }
-  `;
-
-  const variables = { fid: fid };
-
-  console.log('Query:', query);
-  console.log('Variables:', JSON.stringify(variables, null, 2));
-
-  try {
-    console.log('Sending query to Airstack API...');
-    const response = await fetch(AIRSTACK_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': AIRSTACK_API_KEY,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API error:', response.status, errorText);
-      throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('API response data:', JSON.stringify(data, null, 2));
-
-    if (data.errors) {
-      console.error('GraphQL Errors:', data.errors);
-      throw new Error('GraphQL errors in the response');
-    }
-
-    const socialInfo = data.data?.socialInfo?.Social?.[0] || {};
-    const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
-    const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
-    const farScore = socialInfo.farcasterScore?.farScore || null;
-
-    console.log('Parsed social info:', socialInfo);
-    console.log('Today Earnings:', todayEarnings);
-    console.log('Lifetime Earnings:', lifetimeEarnings);
-    console.log('Farscore:', farScore);
-
-    return {
-      profileName: socialInfo.profileName || null,
-      profileImage: socialInfo.profileImage || null,
-      todayEarnings: todayEarnings,
-      lifetimeEarnings: lifetimeEarnings,
-      farScore: farScore,
-    };
-  } catch (error) {
-    console.error('Detailed error in getMoxieUserInfo:', error);
-    throw error;
-  }
+  return {
+    profileName: null,
+    profileImage: null,
+    todayEarnings: '0',
+    lifetimeEarnings: '0',
+    farScore: null
+  };
 }
 
 app.frame('/', (c) => {
@@ -262,7 +184,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
-
+        <Button.Reset>Share</Button.Reset>
       ]
     });
   } catch (renderError) {
