@@ -20,7 +20,6 @@ export const app = new Frog({
 interface MoxieUserInfo {
   profileName: string | null;
   profileImage: string | null;
-  followerCount: number;
   todayEarnings: string;
   lifetimeEarnings: string;
   farScore: number | null;
@@ -30,14 +29,13 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
   console.log(`Fetching info for FID: ${fid}`);
 
   const query = `
-    query UserMoxieEarnings($fid: String!) {
-      Socials(
+    query MoxieEarnings($fid: String!) {
+      socialInfo: Socials(
         input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}
       ) {
         Social {
           profileName
           profileImage
-          followerCount
           farcasterScore {
             farScore
           }
@@ -60,64 +58,61 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     }
   `;
 
-  const variables = { fid: fid };  // Removed the 'fc_fid:' prefix
+  const variables = { fid: fid };
+
+  console.log('Query:', query);
+  console.log('Variables:', JSON.stringify(variables, null, 2));
 
   try {
-    console.log('Fetching user data...');
-    console.log('Query:', query);
-    console.log('Variables:', JSON.stringify(variables, null, 2));
-
+    console.log('Sending query to Airstack API...');
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': AIRSTACK_API_KEY
+        'Authorization': AIRSTACK_API_KEY,
       },
-      body: JSON.stringify({ query, variables })
+      body: JSON.stringify({ query, variables }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Airstack API Error:', response.status, errorText);
+      console.error('API error:', response.status, errorText);
       throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('Full Airstack API response:', JSON.stringify(data, null, 2));
+    console.log('API response data:', JSON.stringify(data, null, 2));
 
     if (data.errors) {
       console.error('GraphQL Errors:', data.errors);
       throw new Error('GraphQL errors in the response');
     }
 
-    const socialInfo = data.data?.Socials?.Social?.[0] || {};
+    const socialInfo = data.data?.socialInfo?.Social?.[0] || {};
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
+    const farScore = socialInfo.farcasterScore?.farScore || null;
 
-    console.log('Parsed user info:', {
-      profileName: socialInfo.profileName,
-      followerCount: socialInfo.followerCount,
-      farScore: socialInfo.farcasterScore?.farScore,
-      todayEarnings,
-      lifetimeEarnings
-    });
+    console.log('Parsed social info:', socialInfo);
+    console.log('Today Earnings:', todayEarnings);
+    console.log('Lifetime Earnings:', lifetimeEarnings);
+    console.log('Farscore:', farScore);
 
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
-      followerCount: socialInfo.followerCount || 0,
-      todayEarnings,
-      lifetimeEarnings,
-      farScore: socialInfo.farcasterScore?.farScore || null
+      todayEarnings: todayEarnings,
+      lifetimeEarnings: lifetimeEarnings,
+      farScore: farScore,
     };
   } catch (error) {
-    console.error('Error in getMoxieUserInfo:', error);
+    console.error('Detailed error in getMoxieUserInfo:', error);
     throw error;
   }
 }
 
 app.frame('/', (c) => {
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdwBfrmugTHyChLfaA9AaV6AjqasvoaVZjP1A6aBzRai9';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmYM1zqkhqLr8aMwbHLqiKhgyZKg35hAU98ASz5M76pt26';
   
   return c.res({
     image: (
@@ -131,7 +126,7 @@ app.frame('/', (c) => {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundColor: '#1DA1F2', // Fallback background color
+        backgroundColor: '#1DA1F2',
       }} />
     ),
     intents: [
@@ -141,7 +136,7 @@ app.frame('/', (c) => {
 });
 
 app.frame('/check', async (c) => {
-  console.log('Checking earnings...');
+  console.log('Entering /check frame');
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
@@ -152,8 +147,7 @@ app.frame('/check', async (c) => {
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error</h1>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>Unable to retrieve your Farcaster ID. Please ensure you have a valid Farcaster profile.</p>
+          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error: No FID</h1>
         </div>
       ),
       intents: [
@@ -162,11 +156,22 @@ app.frame('/check', async (c) => {
     });
   }
 
+  let userInfo: MoxieUserInfo | null = null;
+  let errorMessage = '';
+
   try {
     console.log(`Fetching user info for FID: ${fid}`);
-    const userInfo = await getMoxieUserInfo(fid.toString());
+    userInfo = await getMoxieUserInfo(fid.toString());
     console.log('User info retrieved:', JSON.stringify(userInfo, null, 2));
+  } catch (error) {
+    console.error('Error in getMoxieUserInfo:', error);
+    errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+  }
 
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj';
+
+  console.log('Rendering frame');
+  try {
     return c.res({
       image: (
         <div style={{ 
@@ -176,7 +181,7 @@ app.frame('/check', async (c) => {
           justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: 'url(https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva)',
+          backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
@@ -226,7 +231,7 @@ app.frame('/check', async (c) => {
             }}>
               FID: {fid}
             </p>
-            {userInfo.farScore !== null && (
+            {userInfo && userInfo.farScore !== null && (
               <p style={{ 
                 fontSize: '20px', 
                 marginTop: '5px', 
@@ -238,15 +243,20 @@ app.frame('/check', async (c) => {
             )}
           </div>
           
-          <div style={{ position: 'absolute', top: '40%', right: '15%', textAlign: 'right' }}>
-            <p style={{ fontSize: '40px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {userInfo.todayEarnings} $MOXIE
-            </p>
-            <p style={{ fontSize: '40px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {userInfo.lifetimeEarnings} $MOXIE
-            </p>
-          </div>
-          <p style={{ fontSize: '34px', marginTop: '10px', textAlign: 'center', position: 'absolute', bottom: '20%', left: '50%', transform: 'translateX(-50%)' }}>Followers: {userInfo.followerCount}</p>
+          {errorMessage ? (
+            <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
+          ) : userInfo ? (
+            <div style={{ position: 'absolute', top: '40%', right: '15%', textAlign: 'right' }}>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+                {userInfo.todayEarnings || '0'} $MOXIE
+              </p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+                {userInfo.lifetimeEarnings || '0'} $MOXIE
+              </p>
+            </div>
+          ) : (
+            <p style={{ fontSize: '24px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+          )}
         </div>
       ),
       intents: [
@@ -254,15 +264,15 @@ app.frame('/check', async (c) => {
         <Button action="/check">Refresh</Button>
       ]
     });
-  } catch (error) {
-    console.error('Detailed error in earnings check:', error);
-    let errorMessage = 'Unable to fetch $MOXIE info. Please try again later.';
-    if (error instanceof Error) errorMessage += ` Error: ${error.message}`;
+  } catch (renderError) {
+    console.error('Error rendering frame:', renderError);
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error</h1>
-          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>{errorMessage}</p>
+          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Render Error</h1>
+          <p style={{ fontSize: '24px', textAlign: 'center', color: 'white' }}>
+            {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
+          </p>
         </div>
       ),
       intents: [
