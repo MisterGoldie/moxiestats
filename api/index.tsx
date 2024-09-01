@@ -227,7 +227,6 @@ app.frame('/check', async (c) => {
               fontSize: '26px', 
               marginTop: '10px', 
               color: 'black', 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
               FID: {fid}
             </p>
@@ -236,7 +235,6 @@ app.frame('/check', async (c) => {
                 fontSize: '24px', 
                 marginTop: '5px', 
                 color: 'black', 
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
               }}>
                 Farscore: {userInfo.farScore.toFixed(2)}
               </p>
@@ -247,15 +245,15 @@ app.frame('/check', async (c) => {
             <p style={{ fontSize: '38px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', }}>
                 {userInfo.todayEarnings || '0'} $MOXIE
               </p>
-              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', }}>
                 {userInfo.lifetimeEarnings || '0'} $MOXIE
               </p>
             </div>
           ) : (
-            <p style={{ fontSize: '32px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+            <p style={{ fontSize: '32px', color: 'black', }}>No user data available</p>
           )}
         </div>
       ),
