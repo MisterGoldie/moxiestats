@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva';
 
   console.log('Rendering frame');
   try {
@@ -226,7 +226,7 @@ app.frame('/check', async (c) => {
             <p style={{ 
               fontSize: '24px', 
               marginTop: '10px', 
-              color: 'black', 
+              color: 'white', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
             }}>
               FID: {fid}
@@ -235,7 +235,7 @@ app.frame('/check', async (c) => {
               <p style={{ 
                 fontSize: '20px', 
                 marginTop: '5px', 
-                color: 'black', 
+                color: 'white', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
               }}>
                 Farscore: {userInfo.farScore.toFixed(2)}
@@ -243,7 +243,6 @@ app.frame('/check', async (c) => {
             )}
           </div>
           
-          <h1 style={{ fontSize: '48px', marginBottom: '20px', textAlign: 'center', color: 'black', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>$MOXIE Earnings</h1>
           {errorMessage ? (
             <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
@@ -252,7 +251,7 @@ app.frame('/check', async (c) => {
               <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo.lifetimeEarnings || '0'} $MOXIE</p>
             </>
           ) : (
-            <p style={{ fontSize: '24px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+            <p style={{ fontSize: '24px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
           )}
         </div>
       ),
