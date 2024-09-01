@@ -161,6 +161,8 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj';
+
   console.log('Rendering frame');
   try {
     return c.res({
@@ -168,8 +170,10 @@ app.frame('/check', async (c) => {
         <div style={{ 
           width: '100%', 
           height: '100%', 
-          backgroundColor: '#f0f0f0',
-          color: '#333',
+          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: '#ffffff',
           fontFamily: 'Arial, sans-serif',
           display: 'flex',
           flexDirection: 'column',
@@ -178,14 +182,14 @@ app.frame('/check', async (c) => {
           padding: '20px',
           boxSizing: 'border-box',
         }}>
-          <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>$MOXIE Earnings</h1>
-          <p style={{ fontSize: '36px', marginBottom: '10px' }}>FID: {fid}</p>
+          <h1 style={{ fontSize: '48px', marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>$MOXIE Earnings</h1>
+          <p style={{ fontSize: '36px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>FID: {fid}</p>
           {errorMessage ? (
-            <p style={{ fontSize: '24px', color: 'red' }}>Error: {errorMessage}</p>
+            <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : (
             <>
-              <p style={{ fontSize: '32px', marginBottom: '10px' }}>Today: {userInfo?.todayEarnings || '0'} $MOXIE</p>
-              <p style={{ fontSize: '32px' }}>Lifetime: {userInfo?.lifetimeEarnings || '0'} $MOXIE</p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Today: {userInfo?.todayEarnings || '0'} $MOXIE</p>
+              <p style={{ fontSize: '32px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo?.lifetimeEarnings || '0'} $MOXIE</p>
             </>
           )}
         </div>
