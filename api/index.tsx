@@ -112,7 +112,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 }
 
 app.frame('/', (c) => {
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmNa4UgwGS1LZFCFqQ8yyPkLZ2dHomUh1WyrmEFkv3TY2s';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmYM1zqkhqLr8aMwbHLqiKhgyZKg35hAU98ASz5M76pt26';
   
   return c.res({
     image: (
@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmaS4XwY59GwRrryMbuWYw3coXaPMkv7AbhoK4QjJbNLbD';
 
   console.log('Rendering frame');
   try {
@@ -233,7 +233,7 @@ app.frame('/check', async (c) => {
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
-                fontSize: '24px', 
+                fontSize: '22px', 
                 marginTop: '5px', 
                 color: 'black', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
@@ -260,9 +260,8 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="https://moxiestats.vercel.app/api">Share</Button>,
-        <Button action="/check">Refresh</Button>,
-
+        <Button action="/share">Share</Button>,
+        <Button action="/check">Refresh</Button>
       ]
     });
   } catch (renderError) {
@@ -282,6 +281,36 @@ app.frame('/check', async (c) => {
       ]
     });
   }
+});
+
+app.frame('/share', (c) => {
+  const shareUrl = 'https://moxiestats.vercel.app/api';
+  const shareText = `Check out my $MOXIE earnings! ${shareUrl}`;
+  
+  return c.res({
+    image: (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        width: '100%', 
+        height: '100%', 
+        backgroundColor: '#1DA1F2',
+        color: 'white',
+        fontSize: '24px',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <p>Share your $MOXIE earnings!</p>
+        <p style={{ fontSize: '18px', marginTop: '20px' }}>{shareText}</p>
+      </div>
+    ),
+    intents: [
+      <Button action="/check">Back</Button>,
+      <Button action={shareUrl}>Confirm Share</Button>
+    ]
+  });
 });
 
 export const GET = handle(app);
