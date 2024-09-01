@@ -22,6 +22,7 @@ interface MoxieUserInfo {
   profileImage: string | null;
   todayEarnings: string;
   lifetimeEarnings: string;
+  farScore: number | null;
 }
 
 async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
@@ -35,6 +36,9 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
         Social {
           profileName
           profileImage
+          farcasterScore {
+            farScore
+          }
         }
       }
       todayEarnings: FarcasterMoxieEarningStats(
@@ -87,16 +91,19 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     const socialInfo = data.data?.socialInfo?.Social?.[0] || {};
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
+    const farScore = socialInfo.farcasterScore?.farScore || null;
 
     console.log('Parsed social info:', socialInfo);
     console.log('Today Earnings:', todayEarnings);
     console.log('Lifetime Earnings:', lifetimeEarnings);
+    console.log('Farscore:', farScore);
 
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
       todayEarnings: todayEarnings,
       lifetimeEarnings: lifetimeEarnings,
+      farScore: farScore,
     };
   } catch (error) {
     console.error('Detailed error in getMoxieUserInfo:', error);
@@ -149,7 +156,7 @@ app.frame('/check', async (c) => {
     });
   }
 
-  let userInfo;
+  let userInfo: MoxieUserInfo | null = null;
   let errorMessage = '';
 
   try {
@@ -186,11 +193,14 @@ app.frame('/check', async (c) => {
           <p style={{ fontSize: '36px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>FID: {fid}</p>
           {errorMessage ? (
             <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
-          ) : (
+          ) : userInfo ? (
             <>
-              <p style={{ fontSize: '32px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Today: {userInfo?.todayEarnings || '0'} $MOXIE</p>
-              <p style={{ fontSize: '32px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo?.lifetimeEarnings || '0'} $MOXIE</p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Today: {userInfo.todayEarnings || '0'} $MOXIE</p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo.lifetimeEarnings || '0'} $MOXIE</p>
+              <p style={{ fontSize: '32px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Farscore: {userInfo.farScore !== null ? userInfo.farScore.toFixed(2) : 'N/A'}</p>
             </>
+          ) : (
+            <p style={{ fontSize: '24px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
           )}
         </div>
       ),
