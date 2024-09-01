@@ -35,10 +35,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
         Social {
           profileName
           profileImage
-          followerCount
-          farcasterScore {
-            farScore
-          }
         }
       }
       todayEarnings: FarcasterMoxieEarningStats(
@@ -46,14 +42,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       ) {
         FarcasterMoxieEarningStat {
           allEarningsAmount
-          allEarningsAmountInWei
-          castEarningsAmount
-          castEarningsAmountInWei
-          frameDevEarningsAmount
-          frameDevEarningsAmountInWei
-          otherEarningsAmount
-          otherEarningsAmountInWei
-          timeframe
         }
       }
       lifetimeEarnings: FarcasterMoxieEarningStats(
@@ -61,20 +49,12 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       ) {
         FarcasterMoxieEarningStat {
           allEarningsAmount
-          allEarningsAmountInWei
-          castEarningsAmount
-          castEarningsAmountInWei
-          frameDevEarningsAmount
-          frameDevEarningsAmountInWei
-          otherEarningsAmount
-          otherEarningsAmountInWei
-          timeframe
         }
       }
     }
   `;
 
-  const variables = { fid: fid };  // Removed 'fc_fid:' prefix
+  const variables = { fid: fid };
 
   console.log('Query:', query);
   console.log('Variables:', JSON.stringify(variables, null, 2));
@@ -115,8 +95,8 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     return {
       profileName: socialInfo.profileName || null,
       profileImage: socialInfo.profileImage || null,
-      todayEarnings: parseFloat(todayEarnings).toFixed(2),
-      lifetimeEarnings: parseFloat(lifetimeEarnings).toFixed(2),
+      todayEarnings: todayEarnings,
+      lifetimeEarnings: lifetimeEarnings,
     };
   } catch (error) {
     console.error('Detailed error in getMoxieUserInfo:', error);
