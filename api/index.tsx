@@ -112,7 +112,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 }
 
 app.frame('/', (c) => {
-  console.log('Entering root frame');
   const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmYM1zqkhqLr8aMwbHLqiKhgyZKg35hAU98ASz5M76pt26';
   
   return c.res({
@@ -138,9 +137,6 @@ app.frame('/', (c) => {
 
 app.frame('/check', async (c) => {
   console.log('Entering /check frame');
-  console.log('Frame data:', c.frameData);
-  console.log('Interactor data:', c.var.interactor);
-
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
@@ -266,7 +262,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
-        <Button action="post">Share</Button>
+
       ]
     });
   } catch (renderError) {
@@ -286,22 +282,6 @@ app.frame('/check', async (c) => {
       ]
     });
   }
-});
-
-app.frame('*', (c) => {
-  console.log('Catch-all route hit');
-  console.log('Requested path:', c.req.path);
-  return c.res({
-    image: (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-        <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>404: Page Not Found</h1>
-        <p style={{ fontSize: '24px', color: 'white' }}>Requested path: {c.req.path}</p>
-      </div>
-    ),
-    intents: [
-      <Button action="/">Back to Home</Button>
-    ]
-  });
 });
 
 export const GET = handle(app);
