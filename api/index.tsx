@@ -168,39 +168,91 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmdUvMCf1BxRo5TKdDikaoXcHNh37kGJyw8TqgDGkznSCj';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeWercMgYhWR263URGjFihei7PdwW92mf8MsfH5ZwBZva';
 
   console.log('Rendering frame');
   try {
     return c.res({
       image: (
         <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          color: '#ffffff',
-          fontFamily: 'Arial, sans-serif',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px',
+          padding: '20px', 
           boxSizing: 'border-box',
+          position: 'relative'
         }}>
-          <h1 style={{ fontSize: '48px', marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>$MOXIE Earnings</h1>
-          <p style={{ fontSize: '36px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>FID: {fid}</p>
+          <div style={{
+            position: 'absolute',
+            top: '30px',
+            left: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            {pfpUrl ? (
+              <img 
+                src={pfpUrl} 
+                alt="Profile" 
+                style={{ 
+                  width: '180px', 
+                  height: '180px', 
+                  borderRadius: '50%',
+                  border: '3px solid black'
+                }}
+              />
+            ) : (
+              <div style={{ 
+                width: '180px', 
+                height: '180px', 
+                borderRadius: '50%', 
+                backgroundColor: '#ccc', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                border: '3px solid black',
+                fontSize: '90px',
+                color: '#333'
+              }}>
+                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
+              </div>
+            )}
+            <p style={{ 
+              fontSize: '24px', 
+              marginTop: '10px', 
+              color: 'white', 
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+            }}>
+              FID: {fid}
+            </p>
+            {userInfo && userInfo.farScore !== null && (
+              <p style={{ 
+                fontSize: '20px', 
+                marginTop: '5px', 
+                color: 'white', 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+              }}>
+                Farscore: {userInfo.farScore.toFixed(2)}
+              </p>
+            )}
+          </div>
+          
+          <h1 style={{ fontSize: '48px', marginBottom: '20px', textAlign: 'center', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>$MOXIE Earnings</h1>
           {errorMessage ? (
             <p style={{ fontSize: '24px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
             <>
-              <p style={{ fontSize: '32px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Today: {userInfo.todayEarnings || '0'} $MOXIE</p>
-              <p style={{ fontSize: '32px', marginBottom: '10px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo.lifetimeEarnings || '0'} $MOXIE</p>
-              <p style={{ fontSize: '32px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Farscore: {userInfo.farScore !== null ? userInfo.farScore.toFixed(2) : 'N/A'}</p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Today: {userInfo.todayEarnings || '0'} $MOXIE</p>
+              <p style={{ fontSize: '32px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Lifetime: {userInfo.lifetimeEarnings || '0'} $MOXIE</p>
             </>
           ) : (
-            <p style={{ fontSize: '24px', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+            <p style={{ fontSize: '24px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
           )}
         </div>
       ),
