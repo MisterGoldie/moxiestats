@@ -233,7 +233,7 @@ app.frame('/check', async (c) => {
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
-                fontSize: '22px', 
+                fontSize: '24px', 
                 marginTop: '5px', 
                 color: 'black', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
