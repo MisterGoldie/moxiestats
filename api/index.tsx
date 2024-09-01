@@ -260,7 +260,7 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="/share">Share</Button>,
+        <Button action="https://moxiestats.vercel.app/api">Share</Button>,
         <Button action="/check">Refresh</Button>
       ]
     });
@@ -281,36 +281,6 @@ app.frame('/check', async (c) => {
       ]
     });
   }
-});
-
-app.frame('/share', (c) => {
-  const shareUrl = 'https://moxiestats.vercel.app/api';
-  const shareText = `Check out my $MOXIE earnings! ${shareUrl}`;
-  
-  return c.res({
-    image: (
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        width: '100%', 
-        height: '100%', 
-        backgroundColor: '#1DA1F2',
-        color: 'white',
-        fontSize: '24px',
-        textAlign: 'center',
-        padding: '20px'
-      }}>
-        <p>Share your $MOXIE earnings!</p>
-        <p style={{ fontSize: '18px', marginTop: '20px' }}>{shareText}</p>
-      </div>
-    ),
-    intents: [
-      <Button action="/check">Back</Button>,
-      <Button action={shareUrl}>Confirm Share</Button>
-    ]
-  });
 });
 
 export const GET = handle(app);
