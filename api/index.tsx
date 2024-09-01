@@ -245,7 +245,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
-        <Button.Mint target="/mint">Share My $MOXIE Stats</Button.Mint>
+        <Button.Mint target="/mint">Share $MOXIE Stats</Button.Mint>
       ]
     });
   } catch (renderError) {
@@ -268,7 +268,6 @@ app.frame('/check', async (c) => {
 });
 
 app.frame('/mint', (c) => {
-  const { fid } = c.frameData || {};
   // Here you would typically generate the content to be minted
   // For now, we'll just return a simple message
   return c.res({
