@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmaS4XwY59GwRrryMbuWYw3coXaPMkv7AbhoK4QjJbNLbD';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmeaPoTkbWEhnH8mfwrGxoSFVcEFiyFmiBGAsFAnJcP6z2';
 
   console.log('Rendering frame');
   try {
@@ -233,7 +233,7 @@ app.frame('/check', async (c) => {
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
-                fontSize: '22px', 
+                fontSize: '24px', 
                 marginTop: '5px', 
                 color: 'black', 
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
@@ -260,8 +260,9 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="https://moxiestats.vercel.app/api">Share</Button>,
-        <Button action="/check">Refresh</Button>
+        <Button action="/">Back</Button>,
+        <Button action="/check">Refresh</Button>,
+
       ]
     });
   } catch (renderError) {
