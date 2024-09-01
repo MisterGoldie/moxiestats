@@ -9,7 +9,7 @@ const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API
 export const app = new Frog({
   basePath: '/api',
   imageOptions: { width: 1200, height: 630 },
-  title: '$MOXIE Earnings Tracker',  // Keeping the title as it was
+  title: '$MOXIE Earnings Tracker',
 }).use(
   neynar({
     apiKey: 'NEYNAR_FROG_FM',
@@ -28,8 +28,8 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
   console.log(`Fetching info for FID: ${fid}`);
 
   const query = `
-    query UserMoxieEarnings($fid: String!) {
-      Socials(
+    query MoxieEarnings($fid: String!) {
+      socialInfo: Socials(
         input: {filter: {dappName: {_eq: farcaster}, userId: {_eq: $fid}}, blockchain: ethereum}
       ) {
         Social {
@@ -46,6 +46,14 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       ) {
         FarcasterMoxieEarningStat {
           allEarningsAmount
+          allEarningsAmountInWei
+          castEarningsAmount
+          castEarningsAmountInWei
+          frameDevEarningsAmount
+          frameDevEarningsAmountInWei
+          otherEarningsAmount
+          otherEarningsAmountInWei
+          timeframe
         }
       }
       lifetimeEarnings: FarcasterMoxieEarningStats(
@@ -53,12 +61,23 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       ) {
         FarcasterMoxieEarningStat {
           allEarningsAmount
+          allEarningsAmountInWei
+          castEarningsAmount
+          castEarningsAmountInWei
+          frameDevEarningsAmount
+          frameDevEarningsAmountInWei
+          otherEarningsAmount
+          otherEarningsAmountInWei
+          timeframe
         }
       }
     }
   `;
 
-  const variables = { fid: `fc_fid:${fid}` };
+  const variables = { fid: fid };  // Removed 'fc_fid:' prefix
+
+  console.log('Query:', query);
+  console.log('Variables:', JSON.stringify(variables, null, 2));
 
   try {
     console.log('Sending query to Airstack API...');
@@ -85,7 +104,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       throw new Error('GraphQL errors in the response');
     }
 
-    const socialInfo = data.data?.Socials?.Social?.[0] || {};
+    const socialInfo = data.data?.socialInfo?.Social?.[0] || {};
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
 
@@ -120,7 +139,7 @@ app.frame('/', (c) => {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundColor: '#1DA1F2', // Fallback background color
+        backgroundColor: '#1DA1F2',
       }} />
     ),
     intents: [
@@ -216,8 +235,16 @@ app.frame('/check', async (c) => {
             </p>
           </div>
           
-          {/* The $MOXIE Earnings title is hidden here */}
-
+          <div style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            padding: '20px',
+            borderRadius: '10px',
+            textAlign: 'center'
+          }}>
+            <h1 style={{ fontSize: '48px', marginBottom: '20px', color: '#333' }}>$MOXIE Earnings</h1>
+            <p style={{ fontSize: '36px', color: '#333', marginBottom: '10px' }}>Today: {userInfo.todayEarnings} $MOXIE</p>
+            <p style={{ fontSize: '36px', color: '#333' }}>Lifetime: {userInfo.lifetimeEarnings} $MOXIE</p>
+          </div>
         </div>
       ),
       intents: [
