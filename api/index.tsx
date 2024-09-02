@@ -111,7 +111,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
   }
 }
 
-app.frame('/', (c) => {
+app.frame('/api', (c) => {
   const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmNa4UgwGS1LZFCFqQ8yyPkLZ2dHomUh1WyrmEFkv3TY2s';
   
   return c.res({
@@ -130,14 +130,14 @@ app.frame('/', (c) => {
       }} />
     ),
     intents: [
-      <Button action="check">Check Earnings</Button>,
+      <Button action="/api/check">Check Earnings</Button>,
     ],
     ogImage: imageUrl,
   });
 });
 
-app.frame('/check', async (c) => {
-  console.log('Entering /check frame');
+app.frame('/api/check', async (c) => {
+  console.log('Entering /api/check frame');
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
@@ -152,7 +152,7 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="/">Back</Button>
+        <Button action="/api">Back</Button>
       ],
       ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK',
     });
@@ -262,8 +262,8 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="/">Back</Button>,
-        <Button action="check">Refresh</Button>,
+        <Button action="/api">Back</Button>,
+        <Button action="/api/check">Refresh</Button>,
         <Button.Reset>Share My Stats</Button.Reset>
       ],
       ogImage: imageUrl,
@@ -280,8 +280,8 @@ app.frame('/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="/">Back</Button>,
-        <Button action="check">Retry</Button>
+        <Button action="/api">Back</Button>,
+        <Button action="/api/check">Retry</Button>
       ],
       ogImage: imageUrl,
     });
