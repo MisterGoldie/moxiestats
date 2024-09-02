@@ -60,11 +60,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 
   const variables = { fid: fid };
 
-  console.log('Query:', query);
-  console.log('Variables:', JSON.stringify(variables, null, 2));
-
   try {
-    console.log('Sending query to Airstack API...');
     const response = await fetch(AIRSTACK_API_URL, {
       method: 'POST',
       headers: {
@@ -75,16 +71,12 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API error:', response.status, errorText);
-      throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('API response data:', JSON.stringify(data, null, 2));
 
     if (data.errors) {
-      console.error('GraphQL Errors:', data.errors);
       throw new Error('GraphQL errors in the response');
     }
 
@@ -92,11 +84,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
     const todayEarnings = data.data?.todayEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const lifetimeEarnings = data.data?.lifetimeEarnings?.FarcasterMoxieEarningStat?.[0]?.allEarningsAmount || '0';
     const farScore = socialInfo.farcasterScore?.farScore || null;
-
-    console.log('Parsed social info:', socialInfo);
-    console.log('Today Earnings:', todayEarnings);
-    console.log('Lifetime Earnings:', lifetimeEarnings);
-    console.log('Farscore:', farScore);
 
     return {
       profileName: socialInfo.profileName || null,
@@ -106,12 +93,12 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
       farScore: farScore,
     };
   } catch (error) {
-    console.error('Detailed error in getMoxieUserInfo:', error);
+    console.error('Error in getMoxieUserInfo:', error);
     throw error;
   }
 }
 
-app.frame('/api', (c) => {
+app.frame('/', (c) => {
   const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmNa4UgwGS1LZFCFqQ8yyPkLZ2dHomUh1WyrmEFkv3TY2s';
   
   return c.res({
@@ -130,21 +117,16 @@ app.frame('/api', (c) => {
       }} />
     ),
     intents: [
-      <Button action="/api/check">Check Earnings</Button>,
+      <Button action="check">Check Earnings</Button>,
     ],
-    ogImage: imageUrl,
   });
 });
 
-app.frame('/api/check', async (c) => {
-  console.log('Entering /api/check frame');
+app.frame('/check', async (c) => {
   const { fid } = c.frameData || {};
-  const { displayName, pfpUrl } = c.var.interactor || {};
-
-  console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
+  const { pfpUrl } = c.var.interactor || {};
 
   if (!fid) {
-    console.error('No FID found in frameData');
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
@@ -152,140 +134,65 @@ app.frame('/api/check', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="/api">Back</Button>
+        <Button action="/">Back</Button>
       ],
-      ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK',
     });
   }
 
-  let userInfo: MoxieUserInfo | null = null;
-  let errorMessage = '';
-
+  let userInfo: MoxieUserInfo;
   try {
-    console.log(`Fetching user info for FID: ${fid}`);
     userInfo = await getMoxieUserInfo(fid.toString());
-    console.log('User info retrieved:', JSON.stringify(userInfo, null, 2));
   } catch (error) {
-    console.error('Error in getMoxieUserInfo:', error);
-    errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-  }
-
-  const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
-
-  console.log('Rendering frame');
-  try {
-    return c.res({
-      image: (
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          width: '100%', 
-          height: '100%', 
-          backgroundImage: `url(${imageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: '20px', 
-          boxSizing: 'border-box',
-          position: 'relative'
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: '30px',
-            left: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}>
-            {pfpUrl ? (
-              <img 
-                src={pfpUrl} 
-                alt="Profile" 
-                style={{ 
-                  width: '150px', 
-                  height: '150px', 
-                  borderRadius: '50%',
-                  border: '3px solid black'
-                }}
-              />
-            ) : (
-              <div style={{ 
-                width: '150px', 
-                height: '150px', 
-                borderRadius: '50%', 
-                backgroundColor: '#ccc', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                border: '3px solid black',
-                fontSize: '90px',
-                color: '#333'
-              }}>
-                {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
-              </div>
-            )}
-            <p style={{ 
-              fontSize: '26px', 
-              marginTop: '10px', 
-              color: 'black', 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-            }}>
-              FID: {fid}
-            </p>
-            {userInfo && userInfo.farScore !== null && (
-              <p style={{ 
-                fontSize: '24px', 
-                marginTop: '5px', 
-                color: 'black', 
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-              }}>
-                Farscore: {userInfo.farScore.toFixed(2)}
-              </p>
-            )}
-          </div>
-          
-          {errorMessage ? (
-            <p style={{ fontSize: '38px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
-          ) : userInfo ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {userInfo.todayEarnings || '0'} $MOXIE
-              </p>
-              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {userInfo.lifetimeEarnings || '0'} $MOXIE
-              </p>
-            </div>
-          ) : (
-            <p style={{ fontSize: '32px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
-          )}
-        </div>
-      ),
-      intents: [
-        <Button action="/api">Back</Button>,
-        <Button action="/api/check">Refresh</Button>,
-        <Button.Reset>Share My Stats</Button.Reset>
-      ],
-      ogImage: imageUrl,
-    });
-  } catch (renderError) {
-    console.error('Error rendering frame:', renderError);
+    console.error('Error fetching user info:', error);
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '60px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
-          <p style={{ fontSize: '50px', textAlign: 'center', color: 'black' }}>
-            {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
-          </p>
+          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error fetching data</h1>
         </div>
       ),
       intents: [
-        <Button action="/api">Back</Button>,
-        <Button action="/api/check">Retry</Button>
+        <Button action="/">Back</Button>
       ],
-      ogImage: imageUrl,
     });
   }
+
+  return c.res({
+    image: (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        width: '100%', 
+        height: '100%', 
+        backgroundColor: '#1DA1F2',
+        color: 'white',
+        fontSize: '24px',
+      }}>
+        {pfpUrl && (
+          <img 
+            src={pfpUrl} 
+            alt="Profile" 
+            style={{ 
+              width: '100px', 
+              height: '100px', 
+              borderRadius: '50%',
+              marginBottom: '10px'
+            }}
+          />
+        )}
+        <p>FID: {fid}</p>
+        <p>Today's Earnings: {userInfo.todayEarnings} $MOXIE</p>
+        <p>Lifetime Earnings: {userInfo.lifetimeEarnings} $MOXIE</p>
+        {userInfo.farScore && <p>Farscore: {userInfo.farScore.toFixed(2)}</p>}
+      </div>
+    ),
+    intents: [
+      <Button action="/">Back</Button>,
+      <Button action="check">Refresh</Button>,
+      <Button.Reset>Share My Stats</Button.Reset>
+    ],
+  });
 });
 
 export const GET = handle(app);
