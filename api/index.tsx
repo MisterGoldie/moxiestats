@@ -130,7 +130,7 @@ app.frame('/', (c) => {
       }} />
     ),
     intents: [
-      <Button action="/check">Check Earnings</Button>,
+      <Button action="check">Check Earnings</Button>,
     ],
     ogImage: imageUrl,
   });
@@ -154,7 +154,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>
       ],
-      ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK', // Use an appropriate error image URL
+      ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK',
     });
   }
 
@@ -263,8 +263,8 @@ app.frame('/check', async (c) => {
       ),
       intents: [
         <Button action="/">Back</Button>,
-        <Button action="/check">Refresh</Button>,
-        <Button.Mint target="/mint">Share My Stats</Button.Mint>
+        <Button action="check">Refresh</Button>,
+        <Button.Reset>Share My Stats</Button.Reset>
       ],
       ogImage: imageUrl,
     });
@@ -281,36 +281,11 @@ app.frame('/check', async (c) => {
       ),
       intents: [
         <Button action="/">Back</Button>,
-        <Button action="/check">Retry</Button>
+        <Button action="check">Retry</Button>
       ],
-      ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK', // Use an appropriate error image URL
+      ogImage: imageUrl,
     });
   }
-});
-
-app.frame('/mint', (c) => {
-  const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK'; // Use an appropriate image URL
-  return c.res({
-    image: (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#1DA1F2',
-        color: 'white',
-        fontSize: '40px',
-        textAlign: 'center',
-      }}>
-        Your $MOXIE stats have been shared to your feed!
-      </div>
-    ),
-    intents: [
-      <Button action="/check">Back to Stats</Button>
-    ],
-    ogImage: imageUrl,
-  });
 });
 
 export const GET = handle(app);
