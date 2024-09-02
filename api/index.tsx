@@ -112,7 +112,7 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 }
 
 app.frame('/', (c) => {
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmNa4UgwGS1LZFCFqQ8yyPkLZ2dHomUh1WyrmEFkv3TY2s';
+  const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmNa4UgwGS1LZFCFqQ8yyPkLZ2dHomUh1WyrmEFkv3TY2s';
   
   return c.res({
     image: (
@@ -122,7 +122,7 @@ app.frame('/', (c) => {
         alignItems: 'center',
         width: '100%',
         height: '100%',
-        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundImage: `url(${imageUrl})`,
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -132,6 +132,7 @@ app.frame('/', (c) => {
     intents: [
       <Button action="/check">Check Earnings</Button>,
     ],
+    ogImage: imageUrl,
   });
 });
 
@@ -152,7 +153,8 @@ app.frame('/check', async (c) => {
       ),
       intents: [
         <Button action="/">Back</Button>
-      ]
+      ],
+      ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK', // Use an appropriate error image URL
     });
   }
 
@@ -168,7 +170,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
+  const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
 
   console.log('Rendering frame');
   try {
@@ -181,7 +183,7 @@ app.frame('/check', async (c) => {
           justifyContent: 'center', 
           width: '100%', 
           height: '100%', 
-          backgroundImage: `url(${backgroundImageUrl})`,
+          backgroundImage: `url(${imageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           padding: '20px', 
@@ -263,7 +265,8 @@ app.frame('/check', async (c) => {
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
         <Button.Mint target="/mint">Share My Stats</Button.Mint>
-      ]
+      ],
+      ogImage: imageUrl,
     });
   } catch (renderError) {
     console.error('Error rendering frame:', renderError);
@@ -279,12 +282,14 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Retry</Button>
-      ]
+      ],
+      ogImage: 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK', // Use an appropriate error image URL
     });
   }
 });
 
 app.frame('/mint', (c) => {
+  const imageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK'; // Use an appropriate image URL
   return c.res({
     image: (
       <div style={{
@@ -304,6 +309,7 @@ app.frame('/mint', (c) => {
     intents: [
       <Button action="/check">Back to Stats</Button>
     ],
+    ogImage: imageUrl,
   });
 });
 
