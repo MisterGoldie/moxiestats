@@ -261,9 +261,10 @@ app.frame('/check', async (c) => {
       ),
       intents: [
         <Button action="/">Back</Button>,
-        <Button action="/check">Refresh</Button>
+        <Button action="/check">Refresh</Button>,
+        <Button.Mint target="/check">Share</Button.Mint>
       ],
-      title: `$MOXIE Earnings for FID: ${fid} - ${userInfo ? `${Number(userInfo.todayEarnings).toFixed(2)} | ${Number(userInfo.lifetimeEarnings).toFixed(2)}` : 'Check your earnings'}`
+      title: `$MOXIE Earnings for FID: ${fid}`
     });
   } catch (renderError) {
     console.error('Error rendering frame:', renderError);
