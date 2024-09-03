@@ -169,7 +169,7 @@ app.frame('/check', async (c) => {
     console.error('No FID found in frameData');
     return c.res({
       image: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#E7C4E1' }}>
           <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error: No FID</h1>
         </div>
       ),
@@ -184,9 +184,9 @@ app.frame('/check', async (c) => {
   if (!hasInteracted) {
     return c.res({
       image: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Please Like and Recast</h1>
-          <p style={{ fontSize: '24px', color: 'white', textAlign: 'center' }}>You need to like and recast this frame to view your $MOXIE stats.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#E7C4E1' }}>
+          <h1 style={{ fontSize: '50px', marginBottom: '20px', color: 'white' }}>Please like and recast</h1>
+          <p style={{ fontSize: '40px', color: 'white', textAlign: 'center' }}>You need to like and recast this frame to view your $MOXIE stats.</p>
         </div>
       ),
       intents: [
