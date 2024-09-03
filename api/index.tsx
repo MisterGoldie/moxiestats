@@ -6,7 +6,7 @@ import { neynar } from 'frog/middlewares';
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
 const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
 const NEYNAR_API_KEY = '71332A9D-240D-41E0-8644-31BD70E64036'; // Replace with your actual Neynar API key
-const FRAME_CAST_HASH = process.env.FRAME_CAST_HASH || ''; // Use environment variable
+const FRAME_CAST_HASH = '0xfe90f9de682273e05b201629ad2338bdcd89b6be'; // Replace with your actual frame cast hash
 
 export const app = new Frog({
   basePath: '/api',
@@ -114,11 +114,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
 }
 
 async function hasLikedAndRecasted(fid: string): Promise<boolean> {
-  if (!FRAME_CAST_HASH) {
-    console.log('No frame cast hash set. Skipping like/recast check.');
-    return true; // Always return true if no hash is set
-  }
-
   const url = `https://api.neynar.com/v2/farcaster/reactions/cast?hash=${FRAME_CAST_HASH}&types=likes%2Crecasts&limit=50`;
   const options = {
     method: 'GET',
