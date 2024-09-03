@@ -248,7 +248,7 @@ app.frame('/check', async (c) => {
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE today
+              {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
               </p>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all - time
