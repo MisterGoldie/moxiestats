@@ -271,7 +271,7 @@ app.frame('/check', async (c) => {
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '60px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', color: 'black' }}>Render error</h1>
           <p style={{ fontSize: '50px', textAlign: 'center', color: 'black' }}>
             {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
           </p>
