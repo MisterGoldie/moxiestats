@@ -123,31 +123,34 @@ async function hasLikedAndRecasted(fid: string): Promise<boolean> {
   };
 
   try {
-    console.log(`Checking likes and recasts for FID: ${fid}`);
+    console.log(`Checking reactions for FID: ${fid}`);
     const response = await fetch(url, options);
     const data = await response.json();
     
     console.log('Neynar API response:', JSON.stringify(data, null, 2));
 
-    if (!data || (!data.likes && !data.recasts)) {
+    if (!data || !data.reactions) {
       console.error('Unexpected API response structure:', data);
       return false;
     }
     
-    const likes = data.likes || [];
-    const recasts = data.recasts || [];
+    const reactions = data.reactions || [];
 
-    console.log(`Total likes: ${likes.length}, Total recasts: ${recasts.length}`);
+    console.log(`Total reactions: ${reactions.length}`);
 
-    const hasLiked = likes.some((like: any) => like.reactor.fid.toString() === fid.toString());
-    const hasRecasted = recasts.some((recast: any) => recast.recaster.fid.toString() === fid.toString());
+    const hasLiked = reactions.some((reaction: any) => 
+      reaction.reactor.fid.toString() === fid.toString() && reaction.reaction_type === 'LIKE'
+    );
+    const hasRecasted = reactions.some((reaction: any) => 
+      reaction.reactor.fid.toString() === fid.toString() && reaction.reaction_type === 'RECAST'
+    );
 
     console.log(`User ${fid} has liked: ${hasLiked}, has recasted: ${hasRecasted}`);
 
     // Return true if the user has either liked OR recasted
     return hasLiked || hasRecasted;
   } catch (error) {
-    console.error('Error checking likes and recasts:', error);
+    console.error('Error checking reactions:', error);
     return false;
   }
 }
