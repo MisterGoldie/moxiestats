@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
 
   console.log('Rendering frame');
   try {
@@ -261,9 +261,9 @@ app.frame('/check', async (c) => {
       ),
       intents: [
         <Button action="/">Back</Button>,
-        <Button action="/check">Refresh</Button>,
-        <Button.Reset>Share My Stats</Button.Reset>
-      ]
+        <Button action="/check">Refresh</Button>
+      ],
+      title: `$MOXIE Earnings for FID: ${fid} - ${userInfo ? `${Number(userInfo.todayEarnings).toFixed(2)} | ${Number(userInfo.lifetimeEarnings).toFixed(2)}` : 'Check your earnings'}`
     });
   } catch (renderError) {
     console.error('Error rendering frame:', renderError);
