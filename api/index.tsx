@@ -248,10 +248,10 @@ app.frame('/check', async (c) => {
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {userInfo.todayEarnings || '0'} $MOXIE today
+              {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
               </p>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {userInfo.lifetimeEarnings || '0'} $MOXIE all -time
+              {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE all - time
               </p>
             </div>
           ) : (
@@ -286,5 +286,6 @@ app.frame('/check', async (c) => {
 
 export const GET = handle(app);
 export const POST = handle(app);
+
 
 
