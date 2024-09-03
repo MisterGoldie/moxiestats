@@ -186,7 +186,7 @@ app.frame('/check', async (c) => {
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#E7C4E1' }}>
           <h1 style={{ fontSize: '50px', marginBottom: '20px', color: 'black' }}>Please like and recast</h1>
-          <p style={{ fontSize: '40px', color: 'white', textAlign: 'black' }}>You need to like and recast this frame to view your $MOXIE stats.</p>
+          <p style={{ fontSize: '40px', color: 'black', textAlign: 'center' }}>You need to like and recast this frame to view your $MOXIE stats.</p>
         </div>
       ),
       intents: [
