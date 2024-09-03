@@ -5,10 +5,6 @@ import { neynar } from 'frog/middlewares';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
 const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
-const NEYNAR_API_KEY = '71332A9D-240D-41E0-8644-31BD70E64036'; // Replace with your actual Neynar API key
-const FRAME_CAST_HASH = process.env.FRAME_CAST_HASH || '0x4b7bc219';
-
-console.log('Current FRAME_CAST_HASH:', FRAME_CAST_HASH);
 
 export const app = new Frog({
   basePath: '/api',
@@ -115,46 +111,6 @@ async function getMoxieUserInfo(fid: string): Promise<MoxieUserInfo> {
   }
 }
 
-async function hasLikedAndRecasted(fid: string): Promise<boolean> {
-  const url = `https://api.neynar.com/v2/farcaster/reactions/cast?hash=${FRAME_CAST_HASH}&types=likes%2Crecasts&limit=50`;
-  const options = {
-    method: 'GET',
-    headers: { accept: 'application/json', api_key: NEYNAR_API_KEY },
-  };
-
-  try {
-    console.log(`Checking reactions for FID: ${fid}`);
-    const response = await fetch(url, options);
-    const data = await response.json();
-    
-    console.log('Neynar API response:', JSON.stringify(data, null, 2));
-
-    if (!data || !data.reactions) {
-      console.error('Unexpected API response structure:', data);
-      return false;
-    }
-    
-    const reactions = data.reactions || [];
-
-    console.log(`Total reactions: ${reactions.length}`);
-
-    const hasLiked = reactions.some((reaction: any) => 
-      reaction.reactor.fid.toString() === fid.toString() && reaction.reaction_type === 'LIKE'
-    );
-    const hasRecasted = reactions.some((reaction: any) => 
-      reaction.reactor.fid.toString() === fid.toString() && reaction.reaction_type === 'RECAST'
-    );
-
-    console.log(`User ${fid} has liked: ${hasLiked}, has recasted: ${hasRecasted}`);
-
-    // Return true if the user has either liked OR recasted
-    return hasLiked || hasRecasted;
-  } catch (error) {
-    console.error('Error checking reactions:', error);
-    return false;
-  }
-}
-
 app.frame('/', (c) => {
   const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmNa4UgwGS1LZFCFqQ8yyPkLZ2dHomUh1WyrmEFkv3TY2s';
   
@@ -170,54 +126,32 @@ app.frame('/', (c) => {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundColor: '#E7C4E1',
+        backgroundColor: '#1DA1F2',
       }} />
     ),
     intents: [
-      <Button action="/check">Check stats</Button>,
+      <Button action="/check">Check Earnings</Button>,
     ],
   });
 });
 
 app.frame('/check', async (c) => {
   console.log('Entering /check frame');
-  console.log('Full context:', JSON.stringify(c, null, 2));
-
-  const { fid } = c.frameData?.fid ? c.frameData : (c.req.query() || {});
-  const { displayName, pfpUrl } = c.var?.interactor || {};
+  const { fid } = c.frameData || {};
+  const { displayName, pfpUrl } = c.var.interactor || {};
 
   console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
 
   if (!fid) {
-    console.error('No FID found in frameData or query params');
+    console.error('No FID found in frameData');
     return c.res({
       image: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#E7C4E1' }}>
-          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'black' }}>Error: No FID</h1>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
+          <h1 style={{ fontSize: '36px', marginBottom: '20px', color: 'white' }}>Error: No FID</h1>
         </div>
       ),
       intents: [
         <Button action="/">Back</Button>
-      ]
-    });
-  }
-
-  console.log(`Checking interactions for FID: ${fid}`);
-  const hasInteracted = await hasLikedAndRecasted(fid.toString());
-  console.log(`Interaction check result for FID ${fid}: ${hasInteracted}`);
-
-  if (!hasInteracted) {
-    console.log(`User ${fid} has not interacted, showing like/recast message`);
-    return c.res({
-      image: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#E7C4E1' }}>
-          <h1 style={{ fontSize: '50px', marginBottom: '20px', color: 'black' }}>Please like and recast</h1>
-          <p style={{ fontSize: '40px', color: 'black', textAlign: 'center' }}>You need to like and recast this frame to view your $MOXIE stats.</p>
-        </div>
-      ),
-      intents: [
-        <Button action="/">Back</Button>,
-        <Button action="/check">Check Again</Button>
       ]
     });
   }
@@ -314,10 +248,10 @@ app.frame('/check', async (c) => {
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
+                {userInfo.todayEarnings || '0'} $MOXIE today
               </p>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time
+                {userInfo.lifetimeEarnings || '0'} $MOXIE all -time
               </p>
             </div>
           ) : (
@@ -328,6 +262,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
+
       ]
     });
   } catch (renderError) {
@@ -351,3 +286,6 @@ app.frame('/check', async (c) => {
 
 export const GET = handle(app);
 export const POST = handle(app);
+
+
+
