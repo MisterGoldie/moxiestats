@@ -130,7 +130,7 @@ app.frame('/', (c) => {
       }} />
     ),
     intents: [
-      <Button action="/check">Check Earnings</Button>,
+      <Button action="/check">Check stats</Button>,
     ],
   });
 });
