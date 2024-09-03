@@ -5,7 +5,7 @@ import { neynar } from 'frog/middlewares';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
 const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
-const NEYNAR_API_KEY = 'NEYNAR_API_DOCS'; // Replace with your actual Neynar API key
+const NEYNAR_API_KEY = '71332A9D-240D-41E0-8644-31BD70E64036'; // Replace with your actual Neynar API key
 const FRAME_CAST_HASH = process.env.FRAME_CAST_HASH || '';
 
 const MAIN_BACKGROUND_IMAGE = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmWy8CBXYSKLL9egN1h33Q3ErdDdyxkWaT3pAr1xnSCZ3N';
