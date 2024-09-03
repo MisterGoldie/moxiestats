@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
 
   console.log('Rendering frame');
   try {
@@ -248,10 +248,10 @@ app.frame('/check', async (c) => {
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE
+                {userInfo.todayEarnings || '0'} $MOXIE
               </p>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE
+                {userInfo.lifetimeEarnings || '0'} $MOXIE
               </p>
             </div>
           ) : (
@@ -262,16 +262,15 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
-        <Button.Mint target="/check">Share</Button.Mint>
-      ],
-      title: `$MOXIE Earnings for FID: ${fid}`
+
+      ]
     });
   } catch (renderError) {
     console.error('Error rendering frame:', renderError);
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#1DA1F2' }}>
-          <h1 style={{ fontSize: '60px', marginBottom: '20px', color: 'black' }}>Render error</h1>
+          <h1 style={{ fontSize: '60px', marginBottom: '20px', color: 'black' }}>Render Error</h1>
           <p style={{ fontSize: '50px', textAlign: 'center', color: 'black' }}>
             {renderError instanceof Error ? renderError.message : 'An unknown error occurred during rendering'}
           </p>
@@ -287,3 +286,5 @@ app.frame('/check', async (c) => {
 
 export const GET = handle(app);
 export const POST = handle(app);
+
+
