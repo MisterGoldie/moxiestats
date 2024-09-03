@@ -149,11 +149,11 @@ app.frame('/', (c) => {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundColor: '#1DA1F2',
+        backgroundColor: '#E7C4E1',
       }} />
     ),
     intents: [
-      <Button action="/check">Check Earnings</Button>,
+      <Button action="/check">Check stats</Button>,
     ],
   });
 });
