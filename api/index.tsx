@@ -6,7 +6,7 @@ import { neynar } from 'frog/middlewares';
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
 const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
 const NEYNAR_API_KEY = '71332A9D-240D-41E0-8644-31BD70E64036'; // Replace with your actual Neynar API key
-const FRAME_CAST_HASH = process.env.FRAME_CAST_HASH || '0x0030f186';
+const FRAME_CAST_HASH = process.env.FRAME_CAST_HASH || '0x4b7bc219';
 
 console.log('Current FRAME_CAST_HASH:', FRAME_CAST_HASH);
 
