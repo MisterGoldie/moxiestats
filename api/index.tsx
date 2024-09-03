@@ -244,18 +244,18 @@ app.frame('/check', async (c) => {
           </div>
           
           {errorMessage ? (
-            <p style={{ fontSize: '38px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
+            <p style={{ fontSize: '55px', color: 'red', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>Error: {errorMessage}</p>
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontSize: '55px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
               </p>
-              <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontSize: '55px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all - time
               </p>
             </div>
           ) : (
-            <p style={{ fontSize: '32px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+            <p style={{ fontSize: '55px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
           )}
         </div>
       ),
