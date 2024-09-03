@@ -4,8 +4,8 @@ import fetch from 'node-fetch';
 import { neynar } from 'frog/middlewares';
 
 const AIRSTACK_API_URL = 'https://api.airstack.xyz/gql';
-const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; 
-const NEYNAR_API_KEY = '71332A9D-240D-41E0-8644-31BD70E64036'; 
+const AIRSTACK_API_KEY = '103ba30da492d4a7e89e7026a6d3a234e'; // Your actual API key
+const NEYNAR_API_KEY = '71332A9D-240D-41E0-8644-31BD70E64036'; // Replace with your actual Neynar API key
 const FRAME_CAST_HASH = process.env.FRAME_CAST_HASH || '0x0030f186';
 
 console.log('Current FRAME_CAST_HASH:', FRAME_CAST_HASH);
@@ -169,13 +169,15 @@ app.frame('/', (c) => {
 
 app.frame('/check', async (c) => {
   console.log('Entering /check frame');
-  const { fid } = c.frameData || {};
-  const { displayName, pfpUrl } = c.var.interactor || {};
+  console.log('Full context:', JSON.stringify(c, null, 2));
+
+  const { fid } = c.frameData?.fid ? c.frameData : (c.req.query() || {});
+  const { displayName, pfpUrl } = c.var?.interactor || {};
 
   console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
 
   if (!fid) {
-    console.error('No FID found in frameData');
+    console.error('No FID found in frameData or query params');
     return c.res({
       image: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#E7C4E1' }}>
