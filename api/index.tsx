@@ -168,7 +168,7 @@ app.frame('/check', async (c) => {
     errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
-  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmRKaCeQqu9NGYHcJKseBrwUNGQJp4vQ7K5Mo54nMLixuK';
 
   console.log('Rendering frame');
   try {
@@ -248,10 +248,10 @@ app.frame('/check', async (c) => {
           ) : userInfo ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
+                {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE
               </p>
               <p style={{ fontSize: '42px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time
+                {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE
               </p>
             </div>
           ) : (
@@ -262,6 +262,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
+        <Button.Reset>Share My Stats</Button.Reset>
       ]
     });
   } catch (renderError) {
