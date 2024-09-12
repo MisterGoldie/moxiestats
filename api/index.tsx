@@ -177,6 +177,7 @@ app.frame('/check', async (c) => {
   const shareUrl = `https://moxiestats.vercel.app/api/share?fid=${fid}`;
   const farcasterShareURL = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`;
 
+  // The '/check' frame rendering code you provided would go here
   console.log('Rendering frame');
   try {
     return c.res({
@@ -291,9 +292,41 @@ app.frame('/check', async (c) => {
   }
 });
 
-app.frame('/share', (c) => {
+app.frame('/share', async (c) => {
   const fid = c.req.query('fid');
   
+  if (!fid) {
+    return c.res({
+      image: (
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          width: '100%', 
+          height: '100%', 
+          backgroundColor: '#1DA1F2',
+          color: 'white',
+          fontFamily: 'Arial, sans-serif'
+        }}>
+          <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>Error: No FID provided</h1>
+        </div>
+      ),
+      intents: [
+        <Button action="/check">Check Your Stats</Button>
+      ]
+    });
+  }
+
+  let userInfo: MoxieUserInfo | null = null;
+  try {
+    userInfo = await getMoxieUserInfo(fid);
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+  }
+
+  const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
+
   return c.res({
     image: (
       <div style={{ 
@@ -303,13 +336,33 @@ app.frame('/share', (c) => {
         justifyContent: 'center', 
         width: '100%', 
         height: '100%', 
-        backgroundColor: '#1DA1F2',
-        color: 'white',
-        fontFamily: 'Arial, sans-serif'
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: '20px', 
+        boxSizing: 'border-box',
+        position: 'relative'
       }}>
-        <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>$MOXIE Earnings for FID: {fid}</h1>
-        <p style={{ fontSize: '36px', marginBottom: '40px' }}>Check your own $MOXIE earnings!</p>
-        <p style={{ fontSize: '24px' }}>Tap the button below to view your stats</p>
+        <h1 style={{ fontSize: '48px', marginBottom: '20px', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+          $MOXIE Earnings for FID: {fid}
+        </h1>
+        {userInfo ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <p style={{ fontSize: '36px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
+            </p>
+            <p style={{ fontSize: '40px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time
+            </p>
+            {userInfo.farScore !== null && (
+              <p style={{ fontSize: '32px', marginTop: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+                Farscore: {userInfo.farScore.toFixed(2)}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p style={{ fontSize: '36px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+        )}
       </div>
     ),
     intents: [
