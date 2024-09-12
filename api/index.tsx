@@ -171,7 +171,7 @@ app.frame('/check', async (c) => {
   const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
 
   const shareText = userInfo 
-    ? `I've earned ${Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today and ${Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time! Check your @moxie.eth stats 🔥`
+    ? `I've earned ${Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today and ${Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time! Check your @moxie.eth stats frame by @goldie 🔥`
     : 'Check your @moxie.eth stats on Farcaster!';
   
   const shareUrl = `https://moxiestats.vercel.app/api/share?fid=${fid}`;
