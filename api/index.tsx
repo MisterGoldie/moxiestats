@@ -143,7 +143,7 @@ app.frame('/check', async (c) => {
   const originalFramesLink = 'https://moxiestats.vercel.app/api' // Replace with your actual Frames link
 
   // Construct the Farcaster share URL with both text and the embedded link
-  const farcasterShareURL = `https://warpcast.com/~/compose?text=Make%20sure%20you%20follow%20@goldie%20on%20Farcaster!&embeds[]=${encodeURIComponent(originalFramesLink)}`
+  const farcasterShareURL = `https://warpcast.com/~/compose?text=Check%20your%20Moxie%20stats%20and%20make%20sure%20to%20follow%20@goldie%20on%20Farcaster!&embeds[]=${encodeURIComponent(originalFramesLink)}`
 
 
   console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
