@@ -140,6 +140,12 @@ app.frame('/check', async (c) => {
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
+  const originalFramesLink = 'https://moxiestats.vercel.app/api' // Replace with your actual Frames link
+
+  // Construct the Farcaster share URL with both text and the embedded link
+  const farcasterShareURL = `https://warpcast.com/~/compose?text=Check%20out%20this%20cool%20frame%20on%20Farcaster!&embeds[]=${encodeURIComponent(originalFramesLink)}`
+
+
   console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
 
   if (!fid) {
@@ -262,6 +268,12 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
+        // Share Button with both text and link embedded
+      <Button.Link 
+      href={farcasterShareURL}
+    >
+      Share
+    </Button.Link>,  // This button now shares both text and the link
 
       ]
     });
