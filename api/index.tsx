@@ -343,25 +343,45 @@ app.frame('/share', async (c) => {
         boxSizing: 'border-box',
         position: 'relative'
       }}>
-        <h1 style={{ fontSize: '48px', marginBottom: '20px', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-          $MOXIE Earnings for FID: {fid}
-        </h1>
+        <div style={{
+          position: 'absolute',
+          top: '30px',
+          left: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
+          <p style={{ 
+            fontSize: '30px', 
+            marginTop: '10px', 
+            color: 'black', 
+            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+          }}>
+            FID: {fid}
+          </p>
+          {userInfo && userInfo.farScore !== null && (
+            <p style={{ 
+              fontSize: '30px', 
+              marginTop: '5px', 
+              color: 'black', 
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+            }}>
+              Farscore: {userInfo.farScore.toFixed(2)}
+            </p>
+          )}
+        </div>
+        
         {userInfo ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <p style={{ fontSize: '36px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+            <p style={{ fontSize: '50px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
             </p>
-            <p style={{ fontSize: '40px', marginBottom: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+            <p style={{ fontSize: '55px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time
             </p>
-            {userInfo.farScore !== null && (
-              <p style={{ fontSize: '32px', marginTop: '10px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-                Farscore: {userInfo.farScore.toFixed(2)}
-              </p>
-            )}
           </div>
         ) : (
-          <p style={{ fontSize: '36px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+          <p style={{ fontSize: '55px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
         )}
       </div>
     ),
@@ -370,6 +390,5 @@ app.frame('/share', async (c) => {
     ]
   });
 });
-
 export const GET = handle(app);
 export const POST = handle(app);
