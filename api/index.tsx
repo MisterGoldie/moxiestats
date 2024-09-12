@@ -140,12 +140,6 @@ app.frame('/check', async (c) => {
   const { fid } = c.frameData || {};
   const { displayName, pfpUrl } = c.var.interactor || {};
 
-  const originalFramesLink = 'https://moxiestats.vercel.app/api' // Replace with your actual Frames link
-
-  // Construct the Farcaster share URL with both text and the embedded link
-  const farcasterShareURL = `https://warpcast.com/~/compose?text=Check%20your%20Moxie%20stats%20and%20make%20sure%20to%20follow%20@goldie%20on%20Farcaster!&embeds[]=${encodeURIComponent(originalFramesLink)}`
-
-
   console.log(`FID: ${fid}, Display Name: ${displayName}, PFP URL: ${pfpUrl}`);
 
   if (!fid) {
@@ -175,6 +169,13 @@ app.frame('/check', async (c) => {
   }
 
   const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
+
+  const shareText = userInfo 
+    ? `I've earned ${Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today and ${Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time! Check your @moxie.eth stats 🔥`
+    : 'Check your @moxie.eth stats on Farcaster!';
+  
+  const shareUrl = `https://moxiestats.vercel.app/api/share?fid=${fid}`;
+  const farcasterShareURL = `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`;
 
   console.log('Rendering frame');
   try {
@@ -268,13 +269,7 @@ app.frame('/check', async (c) => {
       intents: [
         <Button action="/">Back</Button>,
         <Button action="/check">Refresh</Button>,
-        // Share Button with both text and link embedded
-      <Button.Link 
-      href={farcasterShareURL}
-    >
-      Share
-    </Button.Link>,  // This button now shares both text and the link
-
+        <Button.Link href={farcasterShareURL}>Share</Button.Link>,
       ]
     });
   } catch (renderError) {
@@ -296,8 +291,32 @@ app.frame('/check', async (c) => {
   }
 });
 
+app.frame('/share', (c) => {
+  const fid = c.req.query('fid');
+  
+  return c.res({
+    image: (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        width: '100%', 
+        height: '100%', 
+        backgroundColor: '#1DA1F2',
+        color: 'white',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>$MOXIE Earnings for FID: {fid}</h1>
+        <p style={{ fontSize: '36px', marginBottom: '40px' }}>Check your own $MOXIE earnings!</p>
+        <p style={{ fontSize: '24px' }}>Tap the button below to view your stats</p>
+      </div>
+    ),
+    intents: [
+      <Button action="/check">Check Your Stats</Button>
+    ]
+  });
+});
+
 export const GET = handle(app);
 export const POST = handle(app);
-
-
-
