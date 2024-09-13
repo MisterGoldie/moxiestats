@@ -127,6 +127,7 @@ app.frame('/', (c) => {
   });
 });
 
+// '/check' frame
 app.frame('/check', async (c) => {
   console.log('Entering /check frame');
   const { fid } = c.frameData || {};
@@ -149,6 +150,7 @@ app.frame('/check', async (c) => {
   }
 
   let userInfo: MoxieUserInfo | null = null;
+  let errorMessage = '';
 
   try {
     console.log(`Fetching user info for FID: ${fid}`);
@@ -156,6 +158,7 @@ app.frame('/check', async (c) => {
     console.log('User info retrieved:', JSON.stringify(userInfo, null, 2));
   } catch (error) {
     console.error('Error in getMoxieUserInfo:', error);
+    errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
   }
 
   const backgroundImageUrl = 'https://amaranth-adequate-condor-278.mypinata.cloud/ipfs/QmPEucEh1aDvSUeiFV3pgTcxqhYXbrADSuixd8wMkUqSrw';
@@ -179,7 +182,6 @@ app.frame('/check', async (c) => {
         backgroundPosition: 'center',
         padding: '20px', 
         boxSizing: 'border-box',
-        position: 'relative'
       }}>
         <div style={{
           display: 'flex',
@@ -236,7 +238,7 @@ app.frame('/check', async (c) => {
             alignItems: 'flex-end'
           }}>
             <p style={{ 
-              fontSize: '60px', 
+              fontSize: '24px', 
               color: 'black', 
               textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
               margin: '0 0 5px 0'
@@ -343,6 +345,7 @@ app.frame('/check', async (c) => {
   });
 });
 
+// '/share' frame
 app.frame('/share', async (c) => {
   const fid = c.req.query('fid');
   
@@ -390,7 +393,6 @@ app.frame('/share', async (c) => {
         backgroundPosition: 'center',
         padding: '20px', 
         boxSizing: 'border-box',
-        position: 'relative'
       }}>
         <div style={{
           display: 'flex',
@@ -504,23 +506,6 @@ app.frame('/share', async (c) => {
               </p>
               <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
                 {Number(userInfo.lifetimeEarnings).toFixed(2)}
-              </p>
-            </div>
-            <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              borderRadius: '15px',
-              padding: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
-                Moxie in progress
-              </p>
-              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
-                {/* Add logic to calculate Moxie in progress */}
-                0.00
               </p>
             </div>
             <div style={{
