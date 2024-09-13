@@ -236,7 +236,7 @@ app.frame('/check', async (c) => {
             alignItems: 'flex-end'
           }}>
             <p style={{ 
-              fontSize: '24px', 
+              fontSize: '60px', 
               color: 'black', 
               textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
               margin: '0 0 5px 0'
