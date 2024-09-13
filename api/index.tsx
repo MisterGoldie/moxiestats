@@ -383,8 +383,6 @@ app.frame('/share', async (c) => {
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
         width: '100%', 
         height: '100%', 
         backgroundImage: `url(${backgroundImageUrl})`,
@@ -395,44 +393,156 @@ app.frame('/share', async (c) => {
         position: 'relative'
       }}>
         <div style={{
-          position: 'absolute',
-          top: '30px',
-          left: '20px',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          width: '100%',
+          marginBottom: '20px'
         }}>
-          <p style={{ 
-            fontSize: '30px', 
-            marginTop: '10px', 
-            color: 'black', 
-            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+          <div style={{
+            display: 'flex',
+            alignItems: 'center'
           }}>
-            FID: {fid}
-          </p>
-          {userInfo && userInfo.farScore !== null && (
-            <p style={{ 
-              fontSize: '30px', 
-              marginTop: '5px', 
+            {userInfo && userInfo.profileImage ? (
+              <img 
+                src={userInfo.profileImage} 
+                alt="Profile" 
+                style={{ 
+                  width: '100px', 
+                  height: '100px', 
+                  borderRadius: '50%',
+                  border: '3px solid black',
+                  marginRight: '20px'
+                }}
+              />
+            ) : (
+              <div style={{ 
+                width: '100px', 
+                height: '100px', 
+                borderRadius: '50%', 
+                backgroundColor: '#ccc', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                border: '3px solid black',
+                fontSize: '60px',
+                color: '#333',
+                marginRight: '20px'
+              }}>
+                {userInfo && userInfo.profileName ? userInfo.profileName.charAt(0).toUpperCase() : 'U'}
+              </div>
+            )}
+            <h1 style={{ 
+              fontSize: '60px', 
               color: 'black', 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+              margin: 0
             }}>
-              Farscore: {userInfo.farScore.toFixed(2)}
+              @{userInfo ? userInfo.profileName : 'User'}
+            </h1>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end'
+          }}>
+            <p style={{ 
+              fontSize: '24px', 
+              color: 'black', 
+              textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+              margin: '0 0 5px 0'
+            }}>
+              FID: {fid}
             </p>
-          )}
+            {userInfo && userInfo.farScore !== null && (
+              <p style={{ 
+                fontSize: '24px', 
+                color: 'black', 
+                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                margin: 0
+              }}>
+                Farscore: {userInfo.farScore.toFixed(2)}
+              </p>
+            )}
+          </div>
         </div>
         
         {userInfo ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <p style={{ fontSize: '50px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {Number(userInfo.todayEarnings).toFixed(2)} $MOXIE today
-            </p>
-            <p style={{ fontSize: '55px', marginBottom: '10px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {Number(userInfo.lifetimeEarnings).toFixed(2)} $MOXIE all-time
-            </p>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr',
+            gridGap: '20px',
+            flex: 1
+          }}>
+            <div style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '15px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
+                Moxie earned today
+              </p>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
+                {Number(userInfo.todayEarnings).toFixed(2)}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '15px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
+                Moxie earned all-time
+              </p>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
+                {Number(userInfo.lifetimeEarnings).toFixed(2)}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '15px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
+                Moxie in progress
+              </p>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
+                {/* Add logic to calculate Moxie in progress */}
+                0.00
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '15px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
+                How much Moxie you've claimed
+              </p>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
+                {/* Add logic to calculate claimed Moxie */}
+                0.00
+              </p>
+            </div>
           </div>
         ) : (
-          <p style={{ fontSize: '55px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+          <p style={{ fontSize: '36px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
         )}
       </div>
     ),
