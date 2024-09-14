@@ -179,18 +179,18 @@ app.frame('/check', async (c) => {
         backgroundPosition: 'center',
         padding: '20px', 
         boxSizing: 'border-box',
-        fontFamily: 'Arial, sans-serif',
+        position: 'relative'
       }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
           width: '100%',
-          marginBottom: '40px'
+          marginBottom: '20px'
         }}>
           <div style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'center'
           }}>
             {pfpUrl ? (
               <img 
@@ -200,6 +200,7 @@ app.frame('/check', async (c) => {
                   width: '100px', 
                   height: '100px', 
                   borderRadius: '50%',
+                  border: '3px solid black',
                   marginRight: '20px'
                 }}
               />
@@ -212,7 +213,8 @@ app.frame('/check', async (c) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                fontSize: '48px',
+                border: '3px solid black',
+                fontSize: '60px',
                 color: '#333',
                 marginRight: '20px'
               }}>
@@ -220,31 +222,33 @@ app.frame('/check', async (c) => {
               </div>
             )}
             <h1 style={{ 
-              fontSize: '48px', 
-              color: 'white', 
+              fontSize: '60px', 
+              color: 'black', 
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-              margin: 0,
+              margin: 0
             }}>
               @{displayName || 'User'}
             </h1>
           </div>
           <div style={{
-            textAlign: 'right',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end'
           }}>
             <p style={{ 
-              fontSize: '24px', 
-              color: 'white', 
-              margin: '0 0 5px 0',
+              fontSize: '60px', 
+              color: 'black', 
               textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+              margin: '0 0 5px 0'
             }}>
               FID: {fid}
             </p>
             {userInfo && userInfo.farScore !== null && (
               <p style={{ 
                 fontSize: '24px', 
-                color: 'white', 
-                margin: 0,
+                color: 'black', 
                 textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                margin: 0
               }}>
                 Farscore: {userInfo.farScore.toFixed(2)}
               </p>
@@ -260,7 +264,7 @@ app.frame('/check', async (c) => {
             flex: 1
           }}>
             <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
               borderRadius: '15px',
               padding: '20px',
               display: 'flex',
@@ -268,15 +272,15 @@ app.frame('/check', async (c) => {
               justifyContent: 'center',
               alignItems: 'center'
             }}>
-              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'white', textAlign: 'center' }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
                 Moxie earned today
               </p>
-              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'white' }}>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
                 {Number(userInfo.todayEarnings).toFixed(2)}
               </p>
             </div>
             <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
               borderRadius: '15px',
               padding: '20px',
               display: 'flex',
@@ -284,15 +288,15 @@ app.frame('/check', async (c) => {
               justifyContent: 'center',
               alignItems: 'center'
             }}>
-              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'white', textAlign: 'center' }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
                 Moxie earned all-time
               </p>
-              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'white' }}>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
                 {Number(userInfo.lifetimeEarnings).toFixed(2)}
               </p>
             </div>
             <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
               borderRadius: '15px',
               padding: '20px',
               display: 'flex',
@@ -300,16 +304,16 @@ app.frame('/check', async (c) => {
               justifyContent: 'center',
               alignItems: 'center'
             }}>
-              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'white', textAlign: 'center' }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
                 Moxie in progress
               </p>
-              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'white' }}>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
                 {/* Add logic to calculate Moxie in progress */}
                 0.00
               </p>
             </div>
             <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
               borderRadius: '15px',
               padding: '20px',
               display: 'flex',
@@ -317,17 +321,17 @@ app.frame('/check', async (c) => {
               justifyContent: 'center',
               alignItems: 'center'
             }}>
-              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'white', textAlign: 'center' }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
                 How much Moxie you've claimed
               </p>
-              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'white' }}>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
                 {/* Add logic to calculate claimed Moxie */}
                 0.00
               </p>
             </div>
           </div>
         ) : (
-          <p style={{ fontSize: '36px', color: 'white', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
+          <p style={{ fontSize: '36px', color: 'black', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>No user data available</p>
         )}
       </div>
     ),
@@ -386,6 +390,7 @@ app.frame('/share', async (c) => {
         backgroundPosition: 'center',
         padding: '20px', 
         boxSizing: 'border-box',
+        position: 'relative'
       }}>
         <div style={{
           display: 'flex',
@@ -499,6 +504,23 @@ app.frame('/share', async (c) => {
               </p>
               <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
                 {Number(userInfo.lifetimeEarnings).toFixed(2)}
+              </p>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              borderRadius: '15px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <p style={{ fontSize: '24px', marginBottom: '10px', color: 'black' }}>
+                Moxie in progress
+              </p>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: 'black' }}>
+                {/* Add logic to calculate Moxie in progress */}
+                0.00
               </p>
             </div>
             <div style={{
